@@ -22,4 +22,9 @@ io.sockets.on('connection', socket => {
   connections.push(socket);
   console.log('Here comes a new user!');
   socket.emit('news', { hello: 'world' });
+
+  socket.on('talking', data => {
+    // console.log(data);
+    socket.broadcast.emit('talking', data);
+  });
 });

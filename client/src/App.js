@@ -1,54 +1,89 @@
 import React, { Component } from 'react';
-import io from 'socket.io-client';
+// import io from 'socket.io-client';
+import Peer from 'simple-peer';
 
-const socketUrl = 'http://localhost:5000/';
+// const socketUrl = 'http://localhost:5000/';
 
 class App extends Component {
-  state = {
-    socket: null
-  };
-
-  componentDidMount() {
-    this.initSocket();
+  constructor(props) {
+    super(props);
+    this.state = {
+      socket: null,
+      peer: null,
+      yourId: {},
+      otherId: {}
+    };
+    this.otherUserAudio = React.createRef();
   }
 
-  initSocket = () => {
-    const socket = io(socketUrl);
-    socket.on('connect', () => {
-      console.log('Connected');
+  async componentDidMount() {
+    let stream;
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+        video: false
+      });
+    } catch (err) {
+      console.log(err);
+    }
+
+    this.setState({
+      peer: new Peer({
+        initiator: window.location.hash === '#init', // true or false whenever is the first peer
+        trickle: false,
+        stream
+      })
     });
-    socket.on('news', data => {
-      console.log(data);
+    this.connectPeer();
+  }
+
+  connectPeer = () => {
+    const { peer } = this.state;
+    peer.on('signal', data => {
+      this.setState({ yourId: data });
     });
-    this.setState({ socket });
+
+    peer.on('stream', stream => {
+      this.otherUserAudio.current.srcObject = stream;
+      this.otherUserAudio.current.play();
+    });
+  };
+
+  handleConnect = () => {
+    const { peer, otherId } = this.state;
+    this.connectPeer();
+
+    peer.signal(otherId);
+  };
+
+  handleChangeTextArea = e => {
+    this.setState({ [e.target.name]: JSON.parse(e.target.value) });
   };
 
   render() {
-    return <div className='App'>hi</div>;
+    const { yourId, otherId } = this.state;
+    return (
+      <div className='App'>
+        <h1>hi</h1>
+        your ID:
+        <textarea
+          name='yourId'
+          onChange={this.handleChangeTextArea}
+          id='yourId'
+          value={JSON.stringify(yourId)}
+        />
+        other ID:
+        <textarea
+          name='otherId'
+          onChange={this.handleChangeTextArea}
+          id='otherId'
+          value={JSON.stringify(otherId)}
+        />
+        <button onClick={this.handleConnect}>Connect</button>
+        <audio ref={this.otherUserAudio} />
+      </div>
+    );
   }
 }
 
 export default App;
-
-// THIS IS HOW WE GET AUIDO FROM USER
-// let constraintObj = {
-//   audio: true,
-//   video: false
-// };
-
-// navigator.mediaDevices
-//   .getUserMedia(constraintObj)
-//   .then(mediaStreamObj => {
-//     // const audioTracks = mediaStreamObj.getAudioTracks();
-//     const audioEl = document.querySelector('audio');
-//     // const video = document.querySelector('video');
-
-//     // video.srcObject = mediaStreamObj;
-//     // video.onloadedmetadata = e => video.play();
-
-//     audioEl.srcObject = mediaStreamObj;
-//     audioEl.onloadedmetadata = e => audioEl.play();
-//   })
-//   .catch(err => {
-//     throw new Error(err);
-//   });
