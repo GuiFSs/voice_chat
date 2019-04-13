@@ -2,6 +2,7 @@ const express = require('express'),
   app = express(),
   server = require('http').createServer(app),
   io = require('socket.io').listen(server),
+  p2pserver = require('socket.io-p2p-server').Server,
   port = process.env.PORT || 5000;
 
 if (process.env.NODE_ENV === 'production') {
@@ -18,13 +19,20 @@ server.listen(port, () => console.log(`Server running on port ${port}`));
 let users = [];
 let connections = [];
 
-io.sockets.on('connection', socket => {
+io.use(p2pserver);
+
+io.on('connection', socket => {
   connections.push(socket);
   console.log('Here comes a new user!');
   socket.emit('news', { hello: 'world' });
 
-  socket.on('talking', data => {
-    // console.log(data);
-    socket.broadcast.emit('talking', data);
+  // socket.on('talking', data => {
+  //   // console.log(data);
+  //   socket.broadcast.emit('talking', data);
+  // });
+
+  socket.on('start-stream', function(data) {
+    console.log('Stream started');
+    socket.broadcast.emit('start-stream', data);
   });
 });

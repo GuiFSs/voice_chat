@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 // import io from 'socket.io-client';
 import Peer from 'simple-peer';
-import P2PConnection from './P2PConnection/P2PConnection';
 
 // const socketUrl = 'http://localhost:5000/';
 
@@ -62,9 +61,26 @@ class App extends Component {
   };
 
   render() {
+    const { yourId, otherId } = this.state;
     return (
-      <div>
-        <P2PConnection />
+      <div className='App'>
+        <h1>hi</h1>
+        your ID:
+        <textarea
+          name='yourId'
+          onChange={this.handleChangeTextArea}
+          id='yourId'
+          value={JSON.stringify(yourId)}
+        />
+        other ID:
+        <textarea
+          name='otherId'
+          onChange={this.handleChangeTextArea}
+          id='otherId'
+          value={JSON.stringify(otherId)}
+        />
+        <button onClick={this.handleConnect}>Connect</button>
+        <audio ref={this.otherUserAudio} />
       </div>
     );
   }
