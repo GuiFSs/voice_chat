@@ -31,7 +31,7 @@ io.on('connection', socket => {
   //   socket.broadcast.emit('talking', data);
   // });
 
-  console.log('number of connected people:'.toUpperCase(), connections.length);
+  console.log('NUMBER OF CONNECTED PEOPLE :', connections.length);
 
   socket.on('start-stream', function(data) {
     console.log('Stream started');
