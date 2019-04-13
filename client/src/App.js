@@ -19,36 +19,34 @@ class App extends Component {
   }
 
   async componentDidMount() {
-    let stream;
-    try {
-      stream = await navigator.mediaDevices.getUserMedia({
-        audio: true,
-        video: false
-      });
-    } catch (err) {
-      console.log(err);
-    }
-
-    this.setState({
-      peer: new Peer({
-        initiator: window.location.hash === '#init', // true or false whenever is the first peer
-        trickle: false,
-        stream
-      })
-    });
-    this.connectPeer();
+    // let stream;
+    // try {
+    //   stream = await navigator.mediaDevices.getUserMedia({
+    //     audio: true,
+    //     video: false
+    //   });
+    // } catch (err) {
+    //   console.log(err);
+    // }
+    // this.setState({
+    //   peer: new Peer({
+    //     initiator: window.location.hash === '#init', // true or false whenever is the first peer
+    //     trickle: false,
+    //     stream
+    //   })
+    // });
+    // this.connectPeer();
   }
 
   connectPeer = () => {
-    const { peer } = this.state;
-    peer.on('signal', data => {
-      this.setState({ yourId: data });
-    });
-
-    peer.on('stream', stream => {
-      this.otherUserAudio.current.srcObject = stream;
-      this.otherUserAudio.current.play();
-    });
+    // const { peer } = this.state;
+    // peer.on('signal', data => {
+    //   this.setState({ yourId: data });
+    // });
+    // peer.on('stream', stream => {
+    //   this.otherUserAudio.current.srcObject = stream;
+    //   this.otherUserAudio.current.play();
+    // });
   };
 
   handleConnect = () => {

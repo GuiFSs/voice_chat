@@ -37,4 +37,10 @@ io.on('connection', socket => {
     console.log('Stream started');
     socket.broadcast.emit('start-stream', data);
   });
+
+  socket.on('disconnect', socket => {
+    connections.pop();
+    console.log('user disconnected');
+    console.log('NUMBER OF CONNECTED PEOPLE :', connections.length);
+  });
 });
