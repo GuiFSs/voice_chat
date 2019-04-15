@@ -33,7 +33,9 @@ io.sockets.on('connection', socket => {
   });
 });
 
-const removeUserByIndex = index => (peers = peers.splice(index, 1));
+const removeUserByIndex = index => {
+  peers.splice(index, 1);
+};
 
 const findUserIndex = id => {
   let userIndex = null;

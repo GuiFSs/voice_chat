@@ -2,32 +2,30 @@ import React from 'react';
 import io from 'socket.io-client';
 import Peer from 'peerjs';
 
-// const socketUrl = 'http://localhost:5000/';
-const socket = io();
+const socketUrl = 'http://localhost:5000/';
+const socket = io(socketUrl);
 
 let myPeer = null;
 
-let otherPeerId = '';
+let othersPeersId = [];
 
 socket.on('new user', () => {
   myPeer = new Peer();
   myPeer.on('open', id => {
+    console.log('sou novo, olha meu id:', id);
+
     socket.emit('add new peer', id);
   });
 
   myPeerFunctions();
 });
 
-socket.on('get other peer id', async data => {
-  otherPeerId = data;
-  const stream = await navigator.mediaDevices.getUserMedia({
-    audio: true
-  });
-  var call = myPeer.call(otherPeerId, stream);
-  call.on('stream', function(remoteStream) {
-    document.getElementById('friend_audio').srcObject = remoteStream;
-  });
-  connectPeers();
+socket.on('get other peer id', data => {
+  if (!othersPeersId.includes(data) && data !== myPeer.id) {
+    othersPeersId.push(data);
+    connectPeerWith(data);
+    callToPeer(data);
+  }
 });
 
 const myPeerFunctions = () => {
@@ -43,23 +41,41 @@ const myPeerFunctions = () => {
     });
     call.answer(stream);
     call.on('stream', remoteStream => {
-      document.getElementById('friend_audio').srcObject = remoteStream;
+      const div = document.getElementById('audio_peers');
+      const audio = document.createElement('audio');
+      audio.id = 'other_audio_' + call.peer;
+      audio.autoplay = true;
+      audio.srcObject = remoteStream;
+      div.appendChild(audio);
     });
   });
 };
 
-const connectPeers = () => {
-  const conn = myPeer.connect(otherPeerId);
-  // on open will be launch when you successfully connect to PeerServer
-  conn.on('open', () => {
-    conn.send('hello there!');
+const callToPeer = async id => {
+  const div = document.getElementById('audio_peers');
+  const stream = await navigator.mediaDevices.getUserMedia({
+    audio: true
+  });
+  const call = myPeer.call(id, stream);
+  console.log('nova call:', call);
+
+  call.on('stream', function(remoteStream) {
+    const audio = document.createElement('audio');
+    audio.id = 'other_audio_' + id;
+    audio.autoplay = true;
+    audio.srcObject = remoteStream;
+    div.appendChild(audio);
   });
 };
 
-const MPeer = () => (
-  <div>
-    <audio autoPlay id='friend_audio' />
-  </div>
-);
+const connectPeerWith = id => {
+  const conn = myPeer.connect(id);
+  // on open will be launch when you successfully connect to PeerServer
+  conn.on('open', () => {
+    conn.send('hello new user!');
+  });
+};
+
+const MPeer = () => <div id='audio_peers' />;
 
 export default MPeer;
