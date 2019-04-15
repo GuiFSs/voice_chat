@@ -27,7 +27,7 @@ socket.on('get other peer id', async data => {
   call.on('stream', function(remoteStream) {
     document.getElementById('friend_audio').srcObject = remoteStream;
   });
-  // connectPeers();
+  connectPeers();
 });
 
 const myPeerFunctions = () => {
