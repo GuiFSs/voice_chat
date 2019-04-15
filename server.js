@@ -2,7 +2,6 @@ const express = require('express'),
   app = express(),
   server = require('http').createServer(app),
   io = require('socket.io').listen(server),
-  p2pserver = require('socket.io-p2p-server').Server,
   port = process.env.PORT || 5000;
 
 if (process.env.NODE_ENV === 'production') {
@@ -16,31 +15,34 @@ if (process.env.NODE_ENV === 'production') {
 
 server.listen(port, () => console.log(`Server running on port ${port}`));
 
-let users = [];
-let connections = [];
+let peers = [];
 
-io.use(p2pserver);
+io.sockets.on('connection', socket => {
+  socket.emit('new user');
 
-io.on('connection', socket => {
-  connections.push(socket);
-  console.log('Here comes a new user!');
-  socket.emit('news', { hello: 'world' });
-
-  // socket.on('talking', data => {
-  //   // console.log(data);
-  //   socket.broadcast.emit('talking', data);
-  // });
-
-  console.log('NUMBER OF CONNECTED PEOPLE :', connections.length);
-
-  socket.on('start-stream', function(data) {
-    console.log('Stream started');
-    socket.broadcast.emit('start-stream', data);
+  socket.on('add new peer', peerId => {
+    peers.push({ id: socket.id, peerId });
+    console.log(`number of users: ${peers.length}`);
+    socket.broadcast.emit('get other peer id', peerId);
   });
 
-  socket.on('disconnect', socket => {
-    connections.pop();
-    console.log('user disconnected');
-    console.log('NUMBER OF CONNECTED PEOPLE :', connections.length);
+  socket.on('disconnect', () => {
+    socket.broadcast.emit('disconnected', socket.id);
+    removeUserByIndex(findUserIndex(socket.id));
+    console.log(`user disconnected, number of users: ${peers.length}`);
   });
 });
+
+const removeUserByIndex = index => (peers = peers.splice(index, 1));
+
+const findUserIndex = id => {
+  let userIndex = null;
+  peers.filter((user, index) => {
+    if (user.id === id) {
+      userIndex = index;
+      return true;
+    }
+    return false;
+  });
+  return userIndex;
+};

@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
 // import io from 'socket.io-client';
-import Peer from 'simple-peer';
-import P2PConnection from './P2PConnection/P2PConnection';
-
-// const socketUrl = 'http://localhost:5000/';
-//ah
+// import Peer from 'simple-peer';
+// import P2PConnection from './P2PConnection/P2PConnection';
+import MPeer from './MPeer/MPeer';
 
 class App extends Component {
   constructor(props) {
@@ -63,7 +61,9 @@ class App extends Component {
   render() {
     return (
       <div>
-        <P2PConnection />
+        {/* <P2PConnection /> */}
+        <h1>hi</h1>
+        <MPeer />
       </div>
     );
   }

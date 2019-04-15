@@ -6,7 +6,7 @@ let io = require('socket.io-client');
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
 
 let socket = io();
-let p2p = new P2P(socket);
+let p2p = new P2P(socket, { numClients: 10 });
 // let startButton = document.getElementById('start-stream');
 
 p2p.on('start-stream', function() {
@@ -17,12 +17,10 @@ p2p.on('start-stream', function() {
 p2p.on('stream', function(stream) {
   let audio = document.querySelector('audio');
   audio.srcObject = stream;
-  console.log(stream);
-
   audio.play();
 });
 
-function startStream() {
+function startStream() {  
   // startButton.setAttribute('disabled', true);
   navigator.getUserMedia(
     { audio: true },
@@ -34,7 +32,7 @@ function startStream() {
 
       let socket = io();
       let p2p = new P2P(socket, {
-        peerOpts: { stream: mediaStreamDestination.stream }
+        peerOpts: { stream: mediaStreamDestination.stream, numClients: 10 }
       });
 
       p2p.on('ready', function() {
