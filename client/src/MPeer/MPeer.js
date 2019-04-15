@@ -2,8 +2,8 @@ import React from 'react';
 import io from 'socket.io-client';
 import Peer from 'peerjs';
 
-const socketUrl = 'http://localhost:5000/';
-const socket = io(socketUrl);
+// const socketUrl = 'http://localhost:5000/';
+const socket = io();
 
 let myPeer = null;
 
