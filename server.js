@@ -2,9 +2,19 @@ const express = require('express'),
   app = express(),
   server = require('http').createServer(app),
   io = require('socket.io').listen(server),
-  port = process.env.PORT || 5000;
+  port = process.env.PORT || 5000,
+  mongoose = require('mongoose');
 
-const ss = require('socket.io-stream');
+const room = require('./api/room');
+const user = require('./api/user');
+const message = require('./api/message');
+
+const db = requier('./config/keys').mongoURI;
+
+mongoose
+  .connect(db, { useNewUrlParser: true })
+  .then(() => console.log('MongoDB Connected'))
+  .catch(err => console.log(err));
 
 if (process.env.NODE_ENV === 'production') {
   // Set static folder
