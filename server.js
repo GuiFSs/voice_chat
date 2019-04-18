@@ -30,7 +30,9 @@ server.listen(port, () => console.log(`Server running on port ${port}`));
 let peers = [];
 
 io.sockets.on('connection', socket => {
-  socket.emit('new user');
+  socket.on('new user', async data => {
+    socket.emit('new user');
+  });
 
   socket.on('add new peer', peerId => {
     peers.push({ id: socket.id, peerId });
