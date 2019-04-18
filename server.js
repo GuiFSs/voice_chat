@@ -4,6 +4,8 @@ const express = require('express'),
   io = require('socket.io').listen(server),
   port = process.env.PORT || 5000;
 
+const ss = require('socket.io-stream');
+
 if (process.env.NODE_ENV === 'production') {
   // Set static folder
   app.use(express.static('client/build'));
