@@ -9,10 +9,10 @@ const room = require('./api/room');
 const user = require('./api/user');
 const message = require('./api/message');
 
-const db = requier('./config/keys').mongoURI;
+const db = require('./config/keys').mongoURI;
 
 mongoose
-  .connect(db, { useNewUrlParser: true })
+  .connect(db, { useNewUrlParser: true, useCreateIndex: true })
   .then(() => console.log('MongoDB Connected'))
   .catch(err => console.log(err));
 
@@ -31,6 +31,8 @@ let peers = [];
 
 io.sockets.on('connection', socket => {
   socket.on('new user', async data => {
+    const { newUser, msg } = await user.createUser(data);
+    await room.newUserInTheRoom(newUser._id);
     socket.emit('new user');
   });
 

@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const Message = new Schema({
+const MessageSchema = new Schema({
   user: {
     type: Schema.Types.ObjectId,
     required: true
@@ -16,4 +16,4 @@ const Message = new Schema({
   }
 });
 
-module.exports = Message = mongoose.model('message', Message);
+module.exports = Message = mongoose.model('message', MessageSchema);
