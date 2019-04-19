@@ -7,11 +7,10 @@ const MPeer = ({ socket }) => {
 
   let othersPeersId = [];
 
+  // TODO: add socket to trigger new user when someone login
   socket.on('new user', () => {
     myPeer = new Peer();
     myPeer.on('open', id => {
-      console.log('sou novo, olha meu id:', id);
-
       socket.emit('add new peer', id);
     });
 

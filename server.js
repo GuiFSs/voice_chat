@@ -1,13 +1,31 @@
 const express = require('express'),
   app = express(),
   server = require('http').createServer(app),
+  bodyParser = require('body-parser'),
   io = require('socket.io').listen(server),
   port = process.env.PORT || 5000,
   mongoose = require('mongoose');
 
-const room = require('./api/room');
-const user = require('./api/user');
-const message = require('./api/message');
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
+app.use(function(req, res, next) {
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'accept, authorization, content-type, x-requested-with'
+  );
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'GET,HEAD,PUT,PATCH,POST,DELETE'
+  );
+  res.setHeader('Access-Control-Allow-Origin', req.header('origin'));
+  next();
+});
+
+const apiRoom = require('./api/room');
+const apiUser = require('./api/user');
+const apiMessage = require('./api/message');
+const userRouter = require('./routes/user');
 
 const db = require('./config/keys').mongoURI;
 
@@ -25,15 +43,24 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
+app.use('/api/user', userRouter);
+
 server.listen(port, () => console.log(`Server running on port ${port}`));
 
 let peers = [];
+let onlineUsers = [];
 
-io.sockets.on('connection', socket => {
+io.sockets.on('connection', async socket => {
   socket.on('new user', async data => {
-    const { newUser, msg } = await user.createUser(data);
-    await room.newUserInTheRoom(newUser._id);
-    socket.emit('new user');
+    await apiRoom.newUserInTheRoom(data._id);
+    const { users } = await apiRoom.getAllUsers();
+    socket.emit('get users of the room', users);
+  });
+
+  socket.on('login', async data => {
+    onlineUsers.push({ socketId: socket.id, data });
+    socket.emit('get online users', onlineUsers);
+    console.log('online users', onlineUsers.length);
   });
 
   socket.on('add new peer', peerId => {
@@ -43,24 +70,49 @@ io.sockets.on('connection', socket => {
   });
 
   socket.on('disconnect', () => {
-    socket.broadcast.emit('disconnected', socket.id);
-    removeUserByIndex(findUserIndex(socket.id));
-    console.log(`user disconnected, number of users: ${peers.length}`);
+    const peerIndex = findPeerIndex(socket.id);
+    const onlineUsersIndex = findUserIndex(socket.id);
+
+    let disconnectedUser = onlineUsers[onlineUsersIndex];
+    if (disconnectedUser) {
+      removeUserByIndex(onlineUsersIndex);
+      socket.broadcast.emit('user disconnected', disconnectedUser);
+    }
+    removePeerByIndex(peerIndex);
+    console.log(
+      `user disconnected, number of users: ${onlineUsers.length}, peers: ${
+        peers.length
+      }`
+    );
   });
 });
 
-const removeUserByIndex = index => {
-  peers.splice(index, 1);
-};
+const removeUserByIndex = onlineUsersIndex =>
+  onlineUsers.splice(onlineUsersIndex, 1);
+const removePeerByIndex = peerIndex => peers.splice(peerIndex, 1);
 
-const findUserIndex = id => {
-  let userIndex = null;
+const findPeerIndex = id => {
+  let peerIndex = null;
   peers.filter((user, index) => {
     if (user.id === id) {
-      userIndex = index;
+      peerIndex = index;
       return true;
     }
     return false;
   });
-  return userIndex;
+
+  return peerIndex;
+};
+
+const findUserIndex = id => {
+  let onlineUsersIndex = null;
+  onlineUsers.filter((user, index) => {
+    if (user.socketId === id) {
+      onlineUsersIndex = index;
+      return true;
+    }
+    return false;
+  });
+
+  return onlineUsersIndex;
 };

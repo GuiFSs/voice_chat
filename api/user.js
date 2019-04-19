@@ -3,28 +3,39 @@ const User = require('../models/User');
 module.exports = {
   createUser: async data => {
     try {
-      const user = await User.findOne({ username: data.username }).exec();
+      const user = await User.findOne({ username: data.username })
+        .select('-password')
+        .exec();
       if (user) {
+        console.log('user already exists');
         return { error: 'user already exists' };
       }
       const newUser = new User({ ...data });
       await newUser.save();
       return { newUser, msg: 'user created with success' };
     } catch (error) {
-      return { error };
+      console.log(error);
     }
   },
 
   login: async data => {
     try {
-      const user = await User.findOne({ username: data.username }).exec();
-      if (!user) return { error: 'user does not exist' };
+      const resUser = await User.findOne({ username: data.username }).exec();
+      if (!resUser) return { error: 'user does not exist' };
 
-      const doesMatch = data.password === user.password;
-      if (doesMatch) return { user };
+      const doesMatch = data.password === resUser.password;
+      if (doesMatch) {
+        const user = {
+          username: resUser.username,
+          _id: resUser._id
+        };
+        return { user };
+      }
 
       return { error: 'username or password does not match' };
     } catch (error) {
+      console.log(error);
+
       return { error };
     }
   }
