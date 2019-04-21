@@ -1,8 +1,10 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import io from 'socket.io-client';
 import MPeer from './components/MPeer/MPeer';
 import Login from './components/Login/Login';
 import axios from 'axios';
+import Chat from './components/Chat/Chat';
+import withRoot from './Layout/withRoot';
 
 const socketUrl = 'http://localhost:5000/';
 
@@ -16,27 +18,16 @@ class App extends Component {
     };
   }
 
-  // static getDerivedStateFromProps = () => ({ socket: io(socketUrl) });
-
-  componentDidMount() {
-    const { socket } = this.state;
-
-    socket.on('error', error => {
-      throw new Error(error);
-    });
-  }
-
   login = async (loginOrCadastrar, user) => {
     const { socket } = this.state;
     if (loginOrCadastrar === 'login') {
       try {
         const res = await axios.post(`${socketUrl}api/user/login`, user);
-        console.log(res.data);
-
+        console.log(res.data.msg);
         this.setState({ user: res.data.user, isAuthenticate: true });
         socket.emit('login', res.data.user);
       } catch (err) {
-        console.log(err);
+        console.log(err.response.data.msg);
       }
     } else {
       try {
@@ -52,10 +43,12 @@ class App extends Component {
   render() {
     const { socket, isAuthenticate } = this.state;
     return (
-      <div>
-        <h1>hi</h1>
+      <div className='div-full'>
         {isAuthenticate ? (
-          <MPeer socket={socket} />
+          <Fragment>
+            {/* <MPeer socket={socket} /> */}
+            <Chat socket={socket} />
+          </Fragment>
         ) : (
           <Login login={this.login} />
         )}
@@ -64,4 +57,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default withRoot(App);

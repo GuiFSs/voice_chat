@@ -12,7 +12,8 @@
     "react-dom": "^16.8.6",
     "react-scripts": "2.1.8",
     "socket.io-client": "2.2.0",
-    "socket.io-stream": "0.9.1"
+    "socket.io-stream": "0.9.1",
+    "typeface-roboto": "0.0.54"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -29,9 +30,5 @@
     "not ie <= 11",
     "not op_mini all"
   ],
-  "proxy": {
-    "*": {
-      "target": "http://localhost:5000"
-    }
-  }
+  "proxy": "http://localhost:5000"
 }

@@ -29,7 +29,7 @@ module.exports = {
           username: resUser.username,
           _id: resUser._id
         };
-        return { user };
+        return { user, msg: 'user logged in' };
       }
 
       return { error: 'username or password does not match' };

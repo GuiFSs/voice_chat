@@ -54,12 +54,14 @@ io.sockets.on('connection', async socket => {
   socket.on('new user', async data => {
     await apiRoom.newUserInTheRoom(data._id);
     const { users } = await apiRoom.getAllUsers();
-    socket.emit('get users of the room', users);
+    socket.broadcast.emit('get users of the room', users);
   });
 
   socket.on('login', async data => {
-    onlineUsers.push({ socketId: socket.id, data });
-    socket.emit('get online users', onlineUsers);
+    onlineUsers.push({ socketId: socket.id, user: data });
+    io.sockets.emit('get online users', onlineUsers);
+    const { users } = await apiRoom.getAllUsers();
+    socket.emit('get users of the room', users);
     console.log('online users', onlineUsers.length);
   });
 

@@ -1,0 +1,7 @@
+body,
+.div-full {
+  height: 100vh;
+}
+body {
+  overflow: hidden;
+}
