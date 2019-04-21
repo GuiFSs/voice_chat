@@ -51,6 +51,7 @@ let peers = [];
 let onlineUsers = [];
 
 io.sockets.on('connection', async socket => {
+  // user related
   socket.on('new user', async data => {
     await apiRoom.newUserInTheRoom(data._id);
     const { users } = await apiRoom.getAllUsers();
@@ -62,9 +63,30 @@ io.sockets.on('connection', async socket => {
     io.sockets.emit('get online users', onlineUsers);
     const { users } = await apiRoom.getAllUsers();
     socket.emit('get users of the room', users);
+
+    const { messages: allMessages } = await apiRoom.getAllMessages();
+
+    io.sockets.emit('get all messages', allMessages);
     console.log('online users', onlineUsers.length);
   });
 
+  // message related
+  socket.on('new message', async data => {
+    const { newMessage, error } = await apiMessage.newMessage(data);
+    if (error) {
+      throw new Error(error);
+    }
+    await apiRoom.newMessage(newMessage._id);
+    const user = await apiUser.getUserById(newMessage.user);
+    const message = {
+      user: user,
+      body: newMessage.body,
+      date: newMessage.date
+    };
+    io.sockets.emit('new message', message);
+  });
+
+  // peer related
   socket.on('add new peer', peerId => {
     peers.push({ id: socket.id, peerId });
     console.log(`number of users: ${peers.length}`);

@@ -10,6 +10,9 @@ const theme = createMuiTheme({
     primary: {
       main: '#7289DA'
     }
+  },
+  typography: {
+    useNextVariants: true
   }
 });
 

@@ -38,5 +38,17 @@ module.exports = {
 
       return { error };
     }
+  },
+  getUserById: async id => {
+    try {
+      const resUser = await User.findById(id)
+        .select('-password')
+        .exec();
+      if (!resUser) return { error: 'user does not exist' };
+      return resUser;
+    } catch (error) {
+      console.log(error);
+      return { error };
+    }
   }
 };

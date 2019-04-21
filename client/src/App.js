@@ -41,13 +41,13 @@ class App extends Component {
   };
 
   render() {
-    const { socket, isAuthenticate } = this.state;
+    const { socket, isAuthenticate, user } = this.state;
     return (
       <div className='div-full'>
         {isAuthenticate ? (
           <Fragment>
             {/* <MPeer socket={socket} /> */}
-            <Chat socket={socket} />
+            <Chat socket={socket} user={user} />
           </Fragment>
         ) : (
           <Login login={this.login} />

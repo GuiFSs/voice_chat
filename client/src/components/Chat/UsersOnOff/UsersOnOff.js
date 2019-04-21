@@ -33,7 +33,7 @@ const UsersOnOff = ({ onlineUsers, usersOfTheRoom }) => {
       >
         <Typography
           style={{ textAlign: 'left' }}
-          variant='subheading'
+          variant='subtitle1'
           gutterBottom
         >
           ONLINE-{onlineUsers && onlineUsers.length}
@@ -63,7 +63,7 @@ const UsersOnOff = ({ onlineUsers, usersOfTheRoom }) => {
 
         <Typography
           style={{ textAlign: 'left' }}
-          variant='subheading'
+          variant='subtitle1'
           gutterBottom
         >
           OFFLINE-{offlineUsers.length}

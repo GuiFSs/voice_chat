@@ -70,20 +70,41 @@ module.exports = {
     try {
       const room = await Room.findOne({ name: 'main channel' }).exec();
       room.messages.push(messageId);
+      room.save();
     } catch (error) {
       return { error };
     }
   },
 
-  getMessages: async (limit = 20, skip = 0) => {
+  getAllMessages: async (limit = 0, skip = 0) => {
     try {
       const room = await Room.findOne({ name: 'main channel' }).exec();
-      const messages = await Message.find({ _id: { $in: room.messages } })
+      const resMessages = await Message.find({ _id: { $in: room.messages } })
         .skip(skip)
         .limit(limit)
+        .sort({ date: -1 })
+        .select('-__v')
         .exec();
+
+      const usersIdFromMessages = resMessages.map(msg => msg.user);
+
+      const users = await User.find({ _id: { $in: usersIdFromMessages } })
+        .select('-password')
+        .exec();
+
+      let messages = resMessages.map(message => {
+        let user = null;
+        for (const [index, usr] of users.entries()) {
+          if (message.user.toString() === usr._id.toString()) {
+            user = users[index];
+            break;
+          }
+        }
+        return { user, body: message.body, date: message.date };
+      });
       return { messages };
     } catch (error) {
+      console.log(error);
       return { error };
     }
   }
