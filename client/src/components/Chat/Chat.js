@@ -40,7 +40,9 @@ class Chat extends Component {
   };
 
   render() {
-    const { usersOfTheRoom, onlineUsers, socket } = this.state;
+    const { usersOfTheRoom, onlineUsers, socket, user } = this.state;
+    const avatarColor = user.avatarColor;
+
     return (
       <Grid
         className='div-full'
@@ -50,9 +52,19 @@ class Chat extends Component {
         alignItems='stretch'
         spacing={16}
       >
-        <Messages socket={socket} />
-        <UsersOnOff usersOfTheRoom={usersOfTheRoom} onlineUsers={onlineUsers} />
-        <TextArea sendMessage={this.sendMessage} />
+        <Messages avatarColor={avatarColor} socket={socket} />
+        <UsersOnOff
+          onUserOnClick={this.props.onUserOnClick}
+          avatarColor={avatarColor}
+          usersOfTheRoom={usersOfTheRoom}
+          onlineUsers={onlineUsers}
+          socket={socket}
+        />
+        <TextArea
+          socket={socket}
+          username={user.username}
+          sendMessage={this.sendMessage}
+        />
       </Grid>
     );
   }

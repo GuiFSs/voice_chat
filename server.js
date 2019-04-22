@@ -76,14 +76,23 @@ io.sockets.on('connection', async socket => {
     if (error) {
       throw new Error(error);
     }
-    await apiRoom.newMessage(newMessage._id);
     const user = await apiUser.getUserById(newMessage.user);
     const message = {
+      _id: newMessage._id,
       user: user,
       body: newMessage.body,
       date: newMessage.date
     };
     io.sockets.emit('new message', message);
+    await apiRoom.newMessage(newMessage._id);
+  });
+
+  socket.on('typing', data => {
+    io.sockets.emit('typing', data);
+  });
+
+  socket.on('stop typing', data => {
+    io.sockets.emit('stop typing', data);
   });
 
   // peer related

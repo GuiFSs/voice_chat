@@ -1,21 +1,35 @@
-import React from 'react';
-import { Grid, Typography, Avatar } from '@material-ui/core';
-import * as muiColors from '@material-ui/core/colors/';
+import React, { useState } from 'react';
+import { Grid, Typography } from '@material-ui/core';
+import UserInformation from '../../UserInformation/UserInformation';
 
-const getRandomMUIColor = () => {
-  const keys = Object.keys(muiColors);
-  const rnd = Math.floor(Math.random() * keys.length);
-  return muiColors[keys[rnd]][500];
-};
-
-const UsersOnOff = ({ onlineUsers, usersOfTheRoom }) => {
+const UsersOnOff = ({
+  onlineUsers,
+  usersOfTheRoom,
+  avatarColor,
+  socket,
+  onUserOnClick
+}) => {
   // TODO: make offline users
   let offlineUsers = [];
+
+  const [typingUsers, setTypingUsers] = useState([]);
+
+  socket.on('typing', data => {
+    const newTyping = [...typingUsers];
+    newTyping.push(data);
+    setTypingUsers(newTyping);
+  });
+
+  socket.on('stop typing', data => {
+    const newTyping = [...typingUsers];
+    const index = newTyping.indexOf(data);
+    newTyping.splice(index, 1);
+    setTypingUsers(newTyping);
+  });
 
   return (
     <Grid
       style={{
-        border: '2px solid black',
         backgroundColor: '#2F3136',
         padding: '20px'
       }}
@@ -41,26 +55,15 @@ const UsersOnOff = ({ onlineUsers, usersOfTheRoom }) => {
         {onlineUsers.length > 0 &&
           onlineUsers.map(({ user }) => (
             <Grid item key={user._id}>
-              <Avatar
-                sizes='50px'
-                style={{
-                  float: 'left',
-                  marginRight: '10px',
-                  marginBottom: '10px',
-                  backgroundColor: getRandomMUIColor()
-                }}
-              >
-                {user.username[0] + user.username[1]}
-              </Avatar>
-              <Typography style={{ width: '300px' }} variant='body1'>
-                {user.username}
-              </Typography>
-              <Typography style={{ width: '300px' }} variant='caption'>
-                Listening to spotify
-              </Typography>
+              <UserInformation
+                onUserOnClick={onUserOnClick}
+                avatarColor={'#DD4A93'}
+                avatarLetters={user.username[0] + user.username[1]}
+                body1={user.username}
+                caption={typingUsers.includes(user.username) && 'typing...'}
+              />
             </Grid>
           ))}
-
         <Typography
           style={{ textAlign: 'left' }}
           variant='subtitle1'

@@ -82,8 +82,7 @@ module.exports = {
       const resMessages = await Message.find({ _id: { $in: room.messages } })
         .skip(skip)
         .limit(limit)
-        .sort({ date: -1 })
-        .select('-__v')
+        .sort({ date: 'asc' })
         .exec();
 
       const usersIdFromMessages = resMessages.map(msg => msg.user);
@@ -100,7 +99,12 @@ module.exports = {
             break;
           }
         }
-        return { user, body: message.body, date: message.date };
+        return {
+          user,
+          body: message.body,
+          date: message.date,
+          _id: message._id
+        };
       });
       return { messages };
     } catch (error) {
