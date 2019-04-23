@@ -9,19 +9,6 @@ const express = require('express'),
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-app.use(function(req, res, next) {
-  res.setHeader(
-    'Access-Control-Allow-Headers',
-    'accept, authorization, content-type, x-requested-with'
-  );
-  res.setHeader(
-    'Access-Control-Allow-Methods',
-    'GET,HEAD,PUT,PATCH,POST,DELETE'
-  );
-  res.setHeader('Access-Control-Allow-Origin', req.header('origin'));
-  next();
-});
-
 const apiRoom = require('./api/room');
 const apiUser = require('./api/user');
 const apiMessage = require('./api/message');
@@ -40,6 +27,19 @@ if (process.env.NODE_ENV === 'production') {
 
   app.get('*', (req, res) => {
     res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
+  });
+} else {
+  app.use(function(req, res, next) {
+    res.setHeader(
+      'Access-Control-Allow-Headers',
+      'accept, authorization, content-type, x-requested-with'
+    );
+    res.setHeader(
+      'Access-Control-Allow-Methods',
+      'GET,HEAD,PUT,PATCH,POST,DELETE'
+    );
+    res.setHeader('Access-Control-Allow-Origin', req.header('origin'));
+    next();
   });
 }
 
