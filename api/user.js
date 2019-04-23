@@ -12,7 +12,14 @@ module.exports = {
       }
       const newUser = new User({ ...data });
       await newUser.save();
-      return { newUser, msg: 'user created with success' };
+      const user = {
+        user: newUser.username,
+        avatarColor: newUser.avatarColor,
+        _id: newUser.avatarColor
+      };
+      console.log('[USER CREATED]', newUser);
+
+      return { user, msg: 'user created with success' };
     } catch (error) {
       console.log(error);
     }
