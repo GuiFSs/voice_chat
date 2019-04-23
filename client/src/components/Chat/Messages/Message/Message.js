@@ -1,7 +1,7 @@
 import React from 'react';
 import { Typography, Divider } from '@material-ui/core';
 import UserInformation from '../../../UserInformation/UserInformation';
-
+//
 const Message = ({
   children,
   previousUsrId,
