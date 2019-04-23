@@ -6,7 +6,7 @@ import Chat from './components/Chat/Chat';
 import withRoot from './Layout/withRoot';
 import * as muiColors from '@material-ui/core/colors/';
 
-let socketUrl = 'http://localhost:5000/';
+let socketUrl = 'http://localhost:5000';
 socketUrl = '';
 
 class App extends Component {
@@ -29,7 +29,7 @@ class App extends Component {
     const { socket } = this.state;
     if (loginOrCadastrar === 'login') {
       try {
-        const res = await axios.post(`${socketUrl}api/user/login`, user);
+        const res = await axios.post(`${socketUrl}/api/user/login`, user);
         console.log(res.data.msg);
         this.setState({
           user: { ...res.data.user },
@@ -41,7 +41,7 @@ class App extends Component {
       }
     } else {
       try {
-        const res = await axios.post(`${socketUrl}api/user/cadastrar`, user);
+        const res = await axios.post(`${socketUrl}/api/user/cadastrar`, user);
         console.log(res.data.msg);
         socket.emit('new user', res.data.newUser);
       } catch (err) {
