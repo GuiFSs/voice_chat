@@ -1,29 +1,10 @@
 import React from 'react';
-import Peer from 'peerjs';
 
-const MPeer = ({ socket }) => {
-  let myPeer = null;
+const PeerConnection = ({ socket, myPeer }) => {
+  if (!myPeer) return;
   let audiosEl = [];
 
   let othersPeersId = [];
-
-  // TODO: add socket to trigger new user when someone login
-  socket.on('new user', () => {
-    myPeer = new Peer();
-    myPeer.on('open', id => {
-      socket.emit('add new peer', id);
-    });
-
-    myPeerFunctions();
-  });
-
-  socket.on('get other peer id', data => {
-    if (!othersPeersId.includes(data) && data !== myPeer.id) {
-      othersPeersId.push(data);
-      connectPeerWith(data);
-      callToPeer(data);
-    }
-  });
 
   const myPeerFunctions = () => {
     myPeer.on('connection', conn => {
@@ -70,6 +51,16 @@ const MPeer = ({ socket }) => {
     });
   };
 
+  myPeerFunctions();
+
+  socket.on('get other peer id', data => {
+    if (!othersPeersId.includes(data) && data !== myPeer.id) {
+      othersPeersId.push(data);
+      connectPeerWith(data);
+      callToPeer(data);
+    }
+  });
+
   return (
     <div id='audio_peers'>
       <h1>{audiosEl}</h1>
@@ -77,4 +68,4 @@ const MPeer = ({ socket }) => {
   );
 };
 
-export default MPeer;
+export default PeerConnection;

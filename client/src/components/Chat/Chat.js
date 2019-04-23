@@ -3,6 +3,7 @@ import UsersOnOff from './UsersOnOff/UsersOnOff';
 import { Grid } from '@material-ui/core';
 import Messages from './Messages/Messages';
 import TextArea from './TextArea/TextArea';
+import VoiceChat from '../VoiceChat/VoiceChat';
 
 class Chat extends Component {
   constructor(props) {
@@ -33,7 +34,6 @@ class Chat extends Component {
   });
 
   sendMessage = value => {
-    if (value.legth === 0) return;
     const { user, socket } = this.state;
     const message = { user: user._id, body: value };
     socket.emit('new message', message);
@@ -52,6 +52,7 @@ class Chat extends Component {
         alignItems='stretch'
         spacing={16}
       >
+        <VoiceChat socket={socket} />
         <Messages avatarColor={avatarColor} socket={socket} />
         <UsersOnOff
           onUserOnClick={this.props.onUserOnClick}

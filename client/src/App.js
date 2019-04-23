@@ -1,6 +1,5 @@
 import React, { Component, Fragment } from 'react';
 import io from 'socket.io-client';
-import MPeer from './components/MPeer/MPeer';
 import Login from './components/Login/Login';
 import axios from 'axios';
 import Chat from './components/Chat/Chat';
@@ -32,7 +31,7 @@ class App extends Component {
         const res = await axios.post(`${socketUrl}api/user/login`, user);
         console.log(res.data.msg);
         this.setState({
-          user: { ...res.data.user, avatarColor: this.getRandomMUIColor() },
+          user: { ...res.data.user },
           isAuthenticate: true
         });
         socket.emit('login', res.data.user);
@@ -51,9 +50,9 @@ class App extends Component {
   };
 
   onUserOnClick = () => {
-    const newUser = { ...this.state.user };
-    newUser.avatarColor = this.getRandomMUIColor();
-    this.setState({ user: newUser });
+    // const newUser = { ...this.state.user };
+    // newUser.avatarColor = this.getRandomMUIColor();
+    // this.setState({ user: newUser });
   };
 
   render() {
@@ -63,7 +62,6 @@ class App extends Component {
       <div className='div-full'>
         {isAuthenticate ? (
           <Fragment>
-            {/* <MPeer socket={socket} /> */}
             <Chat
               onUserOnClick={this.onUserOnClick}
               socket={socket}

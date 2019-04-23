@@ -27,7 +27,8 @@ module.exports = {
       if (doesMatch) {
         const user = {
           username: resUser.username,
-          _id: resUser._id
+          _id: resUser._id,
+          avatarColor: resUser.avatarColor
         };
         return { user, msg: 'user logged in' };
       }

@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import './Login.css';
-import { Button, TextField } from '@material-ui/core';
+import { Button, TextField, Typography } from '@material-ui/core';
 
 class Login extends Component {
   state = {
@@ -10,7 +10,8 @@ class Login extends Component {
     confirmPassword: '',
     showConfirmPassField: false,
     confirmPassError: false,
-    smallText: 'ou cadastre-se'
+    smallText: 'ou cadastre-se',
+    avatarColor: ''
   };
 
   handleInputChange = (name, value) => {
@@ -65,7 +66,7 @@ class Login extends Component {
   };
 
   onClickMainBtn = () => {
-    const { btnText, username, password } = this.state;
+    const { btnText, username, password, avatarColor } = this.state;
 
     if (username.length < 2 || password.length < 2) {
       window.alert('min 2 length plz!!');
@@ -76,7 +77,11 @@ class Login extends Component {
       this.setFormType('login');
     }
 
-    this.props.login(btnText.toLowerCase(), { username, password });
+    this.props.login(btnText.toLowerCase(), {
+      username,
+      password,
+      avatarColor
+    });
   };
 
   render() {
@@ -87,8 +92,54 @@ class Login extends Component {
       confirmPassword,
       showConfirmPassField,
       confirmPassError,
-      smallText
+      smallText,
+      avatarColor
     } = this.state;
+
+    let cadastroForm = null;
+    if (showConfirmPassField) {
+      cadastroForm = (
+        <Fragment>
+          <TextField
+            error={confirmPassError}
+            fullWidth
+            variant='outlined'
+            label='Confirm Password'
+            required
+            type='password'
+            id='confirmPassword'
+            name='confirmPassword'
+            value={confirmPassword}
+            onChange={e =>
+              this.handleInputChange(e.target.name, e.target.value)
+            }
+            onKeyPress={e => (e.key === 'Enter' ? this.onClickMainBtn() : '')}
+          />
+          <br />
+          <br />
+          <label htmlFor='avatarColor'>
+            <Typography inline={true} variant='body1'>
+              escolha uma cor para o seu avatar
+            </Typography>
+          </label>{' '}
+          <input
+            required
+            type='color'
+            id='avatarColor'
+            name='avatarColor'
+            onChange={e =>
+              this.handleInputChange(e.target.name, e.target.value)
+            }
+            value={avatarColor}
+          />
+          <Typography variant='caption'>
+            Obs: pode ser alterada depois (talvez :p)
+          </Typography>
+          <br />
+        </Fragment>
+      );
+    }
+
     return (
       <div id='login-div'>
         <TextField
@@ -116,29 +167,12 @@ class Login extends Component {
           name='password'
           value={password}
           onChange={e => this.handleInputChange(e.target.name, e.target.value)}
+          onKeyPress={e => (e.key === 'Enter' ? this.onClickMainBtn() : '')}
         />
         <br />
         <br />
-        {showConfirmPassField && (
-          <Fragment>
-            <TextField
-              error={confirmPassError}
-              fullWidth
-              variant='outlined'
-              label='Confirm Password'
-              required
-              type='password'
-              id='confirmPassword'
-              name='confirmPassword'
-              value={confirmPassword}
-              onChange={e =>
-                this.handleInputChange(e.target.name, e.target.value)
-              }
-            />
-            <br />
-            <br />
-          </Fragment>
-        )}
+
+        {cadastroForm}
 
         <Button
           disabled={btnText.toLowerCase() === 'cadastrar' && confirmPassError}

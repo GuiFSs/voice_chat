@@ -43,12 +43,11 @@ class Messages extends Component {
 
   render() {
     const { allMessages } = this.state;
-    const { avatarColor } = this.props;
     return (
-      <Grid id='messages-grid' xs={6} sm={9} item>
+      <Grid id='messages-grid' xs={6} sm={8} item>
         {allMessages.map((message, i) => (
           <Message
-            avatarColor={avatarColor}
+            avatarColor={message.user.avatarColor}
             previousUsrId={
               allMessages[i - 1] ? allMessages[i - 1].user.username : null
             }

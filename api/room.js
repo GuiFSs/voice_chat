@@ -50,7 +50,7 @@ module.exports = {
     } catch (error) {
       console.log('error:', error);
 
-      return { error };
+      throw new Error(error);
     }
   },
 

@@ -53,7 +53,14 @@ let onlineUsers = [];
 io.sockets.on('connection', async socket => {
   // user related
   socket.on('new user', async data => {
-    await apiRoom.newUserInTheRoom(data._id);
+    try {
+      await apiRoom.newUserInTheRoom(data._id);
+    } catch (err) {
+      await apiRoom.createRoom('main channel');
+      console.log('room created');
+
+      await apiRoom.newUserInTheRoom(data._id);
+    }
     const { users } = await apiRoom.getAllUsers();
     socket.broadcast.emit('get users of the room', users);
   });
@@ -88,7 +95,7 @@ io.sockets.on('connection', async socket => {
   });
 
   socket.on('typing', data => {
-    io.sockets.emit('typing', data);
+    socket.broadcast.emit('typing', data);
   });
 
   socket.on('stop typing', data => {
@@ -98,7 +105,7 @@ io.sockets.on('connection', async socket => {
   // peer related
   socket.on('add new peer', peerId => {
     peers.push({ id: socket.id, peerId });
-    console.log(`number of users: ${peers.length}`);
+    console.log(`number of users in voice chaht: ${peers.length}`);
     socket.broadcast.emit('get other peer id', peerId);
   });
 

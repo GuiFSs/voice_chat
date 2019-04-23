@@ -20,7 +20,6 @@ const Message = ({
         <Divider
           style={{ marginTop: '10px', marginBottom: '10px' }}
           variant='fullWidth'
-          light={true}
         />
       )}
 
@@ -38,7 +37,6 @@ const Message = ({
       >
         {children}{' '}
       </Typography>
-      {/* {differentUser && <Divider variant='fullWidth' light={true} />} */}
     </div>
   );
 };

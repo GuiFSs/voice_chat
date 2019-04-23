@@ -2,13 +2,7 @@ import React, { useState } from 'react';
 import { Grid, Typography } from '@material-ui/core';
 import UserInformation from '../../UserInformation/UserInformation';
 
-const UsersOnOff = ({
-  onlineUsers,
-  usersOfTheRoom,
-  avatarColor,
-  socket,
-  onUserOnClick
-}) => {
+const UsersOnOff = ({ onlineUsers, usersOfTheRoom, socket, onUserOnClick }) => {
   // TODO: make offline users
   let offlineUsers = [];
 
@@ -33,8 +27,7 @@ const UsersOnOff = ({
         backgroundColor: '#2F3136',
         padding: '20px'
       }}
-      xs={6}
-      sm={3}
+      sm={2}
       item
     >
       <Grid
@@ -57,7 +50,7 @@ const UsersOnOff = ({
             <Grid item key={user._id}>
               <UserInformation
                 onUserOnClick={onUserOnClick}
-                avatarColor={'#DD4A93'}
+                avatarColor={user.avatarColor}
                 avatarLetters={user.username[0] + user.username[1]}
                 body1={user.username}
                 caption={typingUsers.includes(user.username) && 'typing...'}
