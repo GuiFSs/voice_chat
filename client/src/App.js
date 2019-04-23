@@ -6,13 +6,14 @@ import Chat from './components/Chat/Chat';
 import withRoot from './Layout/withRoot';
 import * as muiColors from '@material-ui/core/colors/';
 
-// const socketUrl = 'http://localhost:5000/';
+let socketUrl = 'http://localhost:5000/';
+socketUrl = '';
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      socket: io(),
+      socket: io(socketUrl),
       isAuthenticate: false,
       user: {}
     };
