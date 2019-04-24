@@ -32,7 +32,11 @@ const UserInformation = ({
         {avatarLetters}
       </Avatar>
       <Typography
-        style={{ width: '300px', marginRight: '5px', color: '#3598DB' }}
+        style={{
+          width: '300px',
+          marginRight: '5px',
+          color: '#3598DB'
+        }}
         inline={true}
         variant='body1'
       >

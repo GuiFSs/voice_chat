@@ -32,7 +32,7 @@ module.exports = {
       const room = await Room.findOne({ name: 'main channel' }).exec();
       const alredyExists = room.users.includes(userId);
       if (alredyExists) {
-        console.log('already exists');
+        console.log('already in the room');
         return;
       }
       const user = await User.findById(userId)
@@ -82,7 +82,6 @@ module.exports = {
       const resMessages = await Message.find({ _id: { $in: room.messages } })
         .skip(skip)
         .limit(limit)
-        .sort({ date: 'asc' })
         .exec();
 
       const usersIdFromMessages = resMessages.map(msg => msg.user);

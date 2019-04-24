@@ -4,7 +4,7 @@ import UserInformation from '../../UserInformation/UserInformation';
 
 const UsersOnOff = ({ onlineUsers, usersOfTheRoom, socket, onUserOnClick }) => {
   // TODO: make offline users
-  let offlineUsers = [];
+  let offlineUsers = usersOfTheRoom.filter(user => user.username !== 'guifss');
 
   const [typingUsers, setTypingUsers] = useState([]);
 
@@ -57,6 +57,7 @@ const UsersOnOff = ({ onlineUsers, usersOfTheRoom, socket, onUserOnClick }) => {
               />
             </Grid>
           ))}
+
         <Typography
           style={{ textAlign: 'left' }}
           variant='subtitle1'
@@ -64,6 +65,18 @@ const UsersOnOff = ({ onlineUsers, usersOfTheRoom, socket, onUserOnClick }) => {
         >
           OFFLINE-{offlineUsers.length}
         </Typography>
+        {offlineUsers.length > 0 &&
+          offlineUsers.map(user => (
+            <Grid item key={user._id}>
+              <UserInformation
+                onUserOnClick={onUserOnClick}
+                avatarColor={user.avatarColor}
+                avatarLetters={user.username[0] + user.username[1]}
+                body1={user.username}
+                caption={typingUsers.includes(user.username) && 'typing...'}
+              />
+            </Grid>
+          ))}
       </Grid>
     </Grid>
   );

@@ -58,7 +58,6 @@ io.sockets.on('connection', async socket => {
     } catch (err) {
       await apiRoom.createRoom('main channel');
       console.log('room created');
-
       await apiRoom.newUserInTheRoom(data._id);
     }
     const { users } = await apiRoom.getAllUsers();

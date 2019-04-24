@@ -5,7 +5,7 @@ const apiUser = require('../api/user');
 
 router.post('/cadastrar', async (req, res) => {
   try {
-    const { user: newUser, msg } = await apiUser.createUser(req.body);
+    const { nUser: newUser, msg } = await apiUser.createUser(req.body);
     res.status(201).json({ newUser, msg });
   } catch (error) {
     return res.status(404).json(error);

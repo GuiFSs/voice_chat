@@ -7,7 +7,7 @@ import withRoot from './Layout/withRoot';
 import * as muiColors from '@material-ui/core/colors/';
 
 let socketUrl = 'http://localhost:5000';
-socketUrl = '';
+// socketUrl = '';
 
 class App extends Component {
   constructor(props) {

@@ -13,11 +13,10 @@ module.exports = {
       const newUser = new User({ ...data });
       await newUser.save();
       const nUser = {
+        _id: newUser._id,
         user: newUser.username,
-        avatarColor: newUser.avatarColor,
-        _id: newUser.avatarColor
+        avatarColor: newUser.avatarColor
       };
-      console.log('[USER CREATED]', nUser);
 
       return { nUser, msg: 'user created with success' };
     } catch (error) {

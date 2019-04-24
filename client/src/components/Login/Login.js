@@ -11,7 +11,7 @@ class Login extends Component {
     showConfirmPassField: false,
     confirmPassError: false,
     smallText: 'ou cadastre-se',
-    avatarColor: ''
+    avatarColor: '#7289DA'
   };
 
   handleInputChange = (name, value) => {
