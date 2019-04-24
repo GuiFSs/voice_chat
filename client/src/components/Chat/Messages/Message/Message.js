@@ -25,7 +25,7 @@ const Message = ({
 
       {differentUser && (
         <UserInformation
-          avatarLetters={username[0] + username[1]}
+          avatarLetters={username[0] + username[1] + username[2]}
           body1={username}
           date={date}
           avatarColor={avatarColor}

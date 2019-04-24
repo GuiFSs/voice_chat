@@ -68,8 +68,8 @@ class Login extends Component {
   onClickMainBtn = () => {
     const { btnText, username, password, avatarColor } = this.state;
 
-    if (username.length < 2 || password.length < 2) {
-      window.alert('min 2 length plz!!');
+    if (username.length < 3 || password.length < 3) {
+      window.alert('min 3 length plz!!');
       return;
     }
 
@@ -146,7 +146,7 @@ class Login extends Component {
           fullWidth
           variant='outlined'
           label='Username'
-          placeholder='min length: 2'
+          placeholder='min length: 3'
           required
           autoFocus
           id='username'
@@ -160,7 +160,7 @@ class Login extends Component {
           fullWidth
           variant='outlined'
           label='Password'
-          placeholder='min length: 2'
+          placeholder='min length: 3'
           required
           type='password'
           id='password'

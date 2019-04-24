@@ -65,6 +65,11 @@ io.sockets.on('connection', async socket => {
   });
 
   socket.on('login', async data => {
+    if (userLoggedIn(data)) {
+      socket.emit('error', { msg: 'user already logged in' });
+      return;
+    }
+
     onlineUsers.push({ socketId: socket.id, user: data });
     io.sockets.emit('get online users', onlineUsers);
     const { users } = await apiRoom.getAllUsers();
@@ -115,7 +120,8 @@ io.sockets.on('connection', async socket => {
     let disconnectedUser = onlineUsers[onlineUsersIndex];
     if (disconnectedUser) {
       removeUserByIndex(onlineUsersIndex);
-      socket.broadcast.emit('user disconnected', disconnectedUser);
+      socket.broadcast.emit('get online users', onlineUsers);
+      // socket.broadcast.emit('user disconnected', disconnectedUser);
     }
     removePeerByIndex(peerIndex);
     console.log(
@@ -125,6 +131,9 @@ io.sockets.on('connection', async socket => {
     );
   });
 });
+
+const userLoggedIn = user =>
+  onlineUsers.map(usr => user._id === usr.user._id).includes(true);
 
 const removeUserByIndex = onlineUsersIndex =>
   onlineUsers.splice(onlineUsersIndex, 1);

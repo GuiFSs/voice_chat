@@ -51,7 +51,9 @@ const UsersOnOff = ({ onlineUsers, usersOfTheRoom, socket, onUserOnClick }) => {
               <UserInformation
                 onUserOnClick={onUserOnClick}
                 avatarColor={user.avatarColor}
-                avatarLetters={user.username[0] + user.username[1]}
+                avatarLetters={
+                  user.username[0] + user.username[1] + user.username[2]
+                }
                 body1={user.username}
                 caption={typingUsers.includes(user.username) && 'typing...'}
               />
@@ -71,7 +73,9 @@ const UsersOnOff = ({ onlineUsers, usersOfTheRoom, socket, onUserOnClick }) => {
               <UserInformation
                 onUserOnClick={onUserOnClick}
                 avatarColor={user.avatarColor}
-                avatarLetters={user.username[0] + user.username[1]}
+                avatarLetters={
+                  user.username[0] + user.username[1] + user.username[2]
+                }
                 body1={user.username}
                 caption={typingUsers.includes(user.username) && 'typing...'}
               />
