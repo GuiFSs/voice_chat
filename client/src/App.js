@@ -19,6 +19,16 @@ class App extends Component {
     };
   }
 
+  componentDidMount() {
+    const { socket } = this.state;
+    socket.on('login', data => {
+      this.setState({
+        user: data,
+        isAuthenticate: true
+      });
+    });
+  }
+
   getRandomMUIColor = () => {
     const keys = Object.keys(muiColors);
     const rnd = Math.floor(Math.random() * (keys.length - 1));
@@ -29,15 +39,16 @@ class App extends Component {
     const { socket } = this.state;
     if (loginOrCadastrar === 'login') {
       try {
-        const res = await axios.post(`${socketUrl}/api/user/login`, user);
-        console.log(res.data.msg);
-        this.setState({
-          user: { ...res.data.user },
-          isAuthenticate: true
-        });
-        socket.emit('login', res.data.user);
+        socket.emit('login', user);
+        // const res = await axios.post(`${socketUrl}/api/user/login`, user);
+        // console.log(res.data.msg);
+        // this.setState({
+        //   user: { ...res.data.user },
+        //   isAuthenticate: true
+        // });
+        // socket.emit('login', res.data.user);
       } catch (err) {
-        console.log(err.response.data.msg);
+        console.log(err);
       }
     } else {
       try {

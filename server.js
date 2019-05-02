@@ -70,15 +70,22 @@ io.sockets.on('connection', async socket => {
       return;
     }
 
-    onlineUsers.push({ socketId: socket.id, user: data });
-    io.sockets.emit('get online users', onlineUsers);
-    const { users } = await apiRoom.getAllUsers();
-    socket.emit('get users of the room', users);
+    try {
+      const { user, msg } = await apiUser.login(data);
+      onlineUsers.push({ socketId: socket.id, user });
+      socket.emit('login', user);
+      io.sockets.emit('get online users', onlineUsers);
+      const { users } = await apiRoom.getAllUsers();
+      socket.emit('get users of the room', users);
 
-    const { messages: allMessages } = await apiRoom.getAllMessages();
+      const { messages: allMessages } = await apiRoom.getAllMessages();
 
-    io.sockets.emit('get all messages', allMessages);
-    console.log('online users', onlineUsers.length);
+      io.sockets.emit('get all messages', allMessages);
+      console.log('online users', onlineUsers.length);
+    } catch (err) {
+      socket.emit('error', { msg: 'user not found' });
+      console.log('error with login:', err);
+    }
   });
 
   // message related
@@ -133,7 +140,7 @@ io.sockets.on('connection', async socket => {
 });
 
 const userLoggedIn = user =>
-  onlineUsers.map(usr => user._id === usr.user._id).includes(true);
+  onlineUsers.map(usr => user.username === usr.user.username).includes(true);
 
 const removeUserByIndex = onlineUsersIndex =>
   onlineUsers.splice(onlineUsersIndex, 1);
