@@ -5,9 +5,14 @@ const express = require('express'),
   io = require('socket.io').listen(server),
   port = process.env.PORT || 5000,
   mongoose = require('mongoose');
+const ExpressPeerServer = require('peer').ExpressPeerServer;
+const peerServer = ExpressPeerServer(server, {
+  debug: true
+});
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use('/peerjs', peerServer);
 
 const apiRoom = require('./api/room');
 const apiUser = require('./api/user');
