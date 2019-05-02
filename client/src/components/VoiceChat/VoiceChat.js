@@ -18,19 +18,17 @@ class VoiceChat extends Component {
   static getDerivedStateFromProps = props => ({ socket: props.socket });
 
   connectToVoiceChat = () => {
-    const myPeer = this.createPeer();
-    this.setState({
-      userConnectedToVoiceChat: true,
-      showConnectButton: 'hidden',
-      myPeer
-    });
-  };
-
-  createPeer = () => {
     const { socket } = this.state;
     const myPeer = new Peer();
     myPeer.on('open', id => {
+      console.log('my peer is:', id);
+
       socket.emit('add new peer', id);
+      this.setState({
+        userConnectedToVoiceChat: true,
+        showConnectButton: 'hidden',
+        myPeer
+      });
     });
     return myPeer;
   };

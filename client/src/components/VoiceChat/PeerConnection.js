@@ -1,10 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 const PeerConnection = ({ socket, myPeer }) => {
   if (!myPeer) return;
-  let audiosEl = [];
+  const [audiosEl, setAudiosEl] = useState([]);
 
   let othersPeersId = [];
+
+  const creteNewAudioEl = (peer, remoteStream) => {
+    const audioElAlreadyExists = audiosEl
+      .map(audio => audio.props.split('_')[2] === peer)
+      .includes(true);
+    if (audioElAlreadyExists) return;
+    const newAudiosEl = [...audiosEl];
+    const id = `other_audio_${peer}`;
+    newAudiosEl.push({
+      id,
+      remoteStream
+    });
+    setAudiosEl(newAudiosEl);
+  };
 
   const myPeerFunctions = () => {
     myPeer.on('connection', conn => {
@@ -19,13 +33,7 @@ const PeerConnection = ({ socket, myPeer }) => {
       });
       call.answer(stream);
       call.on('stream', remoteStream => {
-        audiosEl.push(
-          <audio
-            id={`other_audio_${call.peer}`}
-            autoPlay
-            srcObject={remoteStream}
-          />
-        );
+        creteNewAudioEl(call.peer, remoteStream);
       });
     });
   };
@@ -35,11 +43,9 @@ const PeerConnection = ({ socket, myPeer }) => {
       audio: true
     });
     const call = myPeer.call(id, stream);
-    console.log('nova call:', call);
+    console.log('nova call with:', call.peer);
     call.on('stream', function(remoteStream) {
-      audiosEl.push(
-        <audio id={`other_audio_${id}`} autoPlay srcObject={remoteStream} />
-      );
+      creteNewAudioEl(call.peer, remoteStream);
     });
   };
 
@@ -56,14 +62,28 @@ const PeerConnection = ({ socket, myPeer }) => {
   socket.on('get other peer id', data => {
     if (!othersPeersId.includes(data) && data !== myPeer.id) {
       othersPeersId.push(data);
-      connectPeerWith(data);
       callToPeer(data);
+      connectPeerWith(data);
     }
   });
 
   return (
     <div id='audio_peers'>
-      <h1>{audiosEl}</h1>
+      {console.log('audios: ', audiosEl)}
+      <h1>
+        {audiosEl.map(aud => (
+          <audio
+            key={aud.id}
+            id={aud.id}
+            autoPlay={true}
+            ref={audio => {
+              if (audio) {
+                audio.srcObject = aud.remoteStream;
+              }
+            }}
+          />
+        ))}
+      </h1>
     </div>
   );
 };
