@@ -32,6 +32,7 @@ class VoiceChat extends Component {
     });
     myPeer.on('open', id => {
       socket.emit('add new peer', id);
+      console.log('my peer id:', id);
 
       this.setState({
         userConnectedToVoiceChat: true,
