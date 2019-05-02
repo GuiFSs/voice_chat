@@ -25,10 +25,10 @@ class VoiceChat extends Component {
   connectToVoiceChat = () => {
     const { socket } = this.state;
     const myPeer = new Peer({
-      // key: 'peerjs',
+      // key
       path: '/peerjs', // <==========
       host: 'audio-chat-aps.herokuapp.com',
-      port: 80
+      secure: true
     });
     myPeer.on('open', id => {
       socket.emit('add new peer', id);
