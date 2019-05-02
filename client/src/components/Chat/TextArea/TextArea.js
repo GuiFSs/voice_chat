@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TextField } from '@material-ui/core';
+import { TextField, Grid } from '@material-ui/core';
 
 // TODO: create events when user is typing, create the message when someone press ENTER
 const TextArea = ({ sendMessage, socket, username }) => {
@@ -28,24 +28,34 @@ const TextArea = ({ sendMessage, socket, username }) => {
     }
   };
   return (
-    <TextField
-      style={{
-        position: 'fixed',
-        width: '67% ',
-        bottom: '5px',
-        marginLeft: '17%',
-        backgroundColor: '#484C52'
-      }}
-      onChange={e => handleChange(e.target.value)}
-      onKeyPress={e => (e.key === 'Enter' ? handleEnterPressed() : '')}
-      value={txtValue}
-      placeholder='Message #knéél-generél'
-      multiline
-      fullWidth
-      rows='2'
-      margin='normal'
-      variant='outlined'
-    />
+    <Grid
+      style={{ marginTop: '-5px' }}
+      container
+      direction='row'
+      justify='flex-start'
+      alignItems='flex-start'
+    >
+      <Grid xs={3} sm={2} item />
+      <Grid xs={6} sm={8} item>
+        <TextField
+          style={{
+            // position: 'fixed',
+            // width: '67% ',
+            bottom: '5px',
+            backgroundColor: '#484C52'
+          }}
+          onChange={e => handleChange(e.target.value)}
+          onKeyPress={e => (e.key === 'Enter' ? handleEnterPressed() : '')}
+          value={txtValue}
+          placeholder='Message #knéél-generél'
+          multiline
+          fullWidth
+          rows='2'
+          margin='normal'
+          variant='outlined'
+        />
+      </Grid>
+    </Grid>
   );
 };
 

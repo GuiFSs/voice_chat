@@ -91,22 +91,7 @@ class VoiceChat extends Component {
           </Typography>
           <div style={{ marginLeft: '20px' }}>
             {users.map(usr => (
-              <div style={{ marginTop: '15px' }}>
-                <UserInformation
-                  key={usr.username}
-                  avatarConfig={{ w: '25px', h: '25px', fs: '11pt' }}
-                  avatarColor={usr.avatarColor}
-                  avatarLetters={`${usr.username
-                    .split('')
-                    .filter((_, i) => i < 3)
-                    .join('')}`}
-                  body1={usr.username}
-                  // onUserOnClick
-                />
-              </div>
-            ))}
-            {users.map(usr => (
-              <div key={usr.username} style={{ marginTop: '13px' }}>
+              <div key={usr.username} style={{ marginTop: '15px' }}>
                 <UserInformation
                   avatarConfig={{ w: '25px', h: '25px', fs: '11pt' }}
                   avatarColor={usr.avatarColor}
