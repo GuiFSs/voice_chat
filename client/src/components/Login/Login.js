@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
-import './Login.css';
-import { Button, TextField, Typography } from '@material-ui/core';
+// import './Login.css';
+import { Button, TextField, Typography, Grid } from '@material-ui/core';
 
 class Login extends Component {
   state = {
@@ -141,59 +141,71 @@ class Login extends Component {
     }
 
     return (
-      <div id='login-div'>
-        <TextField
-          fullWidth
-          variant='outlined'
-          label='Username'
-          placeholder='min length: 3'
-          required
-          autoFocus
-          id='username'
-          name='username'
-          value={username}
-          onChange={e => this.handleInputChange(e.target.name, e.target.value)}
-        />
-        <br />
-        <br />
-        <TextField
-          fullWidth
-          variant='outlined'
-          label='Password'
-          placeholder='min length: 3'
-          required
-          type='password'
-          id='password'
-          name='password'
-          value={password}
-          onChange={e => this.handleInputChange(e.target.name, e.target.value)}
-          onKeyPress={e => (e.key === 'Enter' ? this.onClickMainBtn() : '')}
-        />
-        <br />
-        <br />
+      <Grid
+        direction='row'
+        justify='center'
+        alignItems='flex-end'
+        container
+        style={{ height: window.innerHeight }}
+      >
+        <Grid xs={8} md={6} style={{ alignSelf: 'center' }} id='login-div' item>
+          <TextField
+            fullWidth
+            variant='outlined'
+            label='Username'
+            placeholder='min length: 3'
+            required
+            autoFocus
+            id='username'
+            name='username'
+            value={username}
+            onChange={e =>
+              this.handleInputChange(e.target.name, e.target.value)
+            }
+          />
+          <br />
+          <br />
+          <TextField
+            fullWidth
+            variant='outlined'
+            label='Password'
+            placeholder='min length: 3'
+            required
+            type='password'
+            id='password'
+            name='password'
+            value={password}
+            onChange={e =>
+              this.handleInputChange(e.target.name, e.target.value)
+            }
+            onKeyPress={e => (e.key === 'Enter' ? this.onClickMainBtn() : '')}
+          />
+          <br />
+          <br />
 
-        {cadastroForm}
+          {cadastroForm}
 
-        <Button
-          disabled={btnText.toLowerCase() === 'cadastrar' && confirmPassError}
-          fullWidth
-          variant='contained'
-          color='primary'
-          onClick={this.onClickMainBtn}
-        >
-          {btnText}
-        </Button>
+          <Button
+            disabled={btnText.toLowerCase() === 'cadastrar' && confirmPassError}
+            fullWidth
+            variant='contained'
+            color='primary'
+            onClick={this.onClickMainBtn}
+          >
+            {btnText}
+          </Button>
 
-        <Button
-          onClick={this.onClickSmallBtn}
-          style={{ float: 'right', marginTop: '5px' }}
-          color='default'
-          variant='text'
-          size='small'
-        >
-          <small>{smallText}</small>
-        </Button>
-      </div>
+          <Button
+            onClick={this.onClickSmallBtn}
+            style={{ float: 'right', marginTop: '5px' }}
+            color='default'
+            variant='text'
+            size='small'
+          >
+            <small>{smallText}</small>
+          </Button>
+        </Grid>
+      </Grid>
     );
   }
 }

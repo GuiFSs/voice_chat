@@ -72,6 +72,7 @@ io.sockets.on('connection', async socket => {
 
     try {
       const { user, msg } = await apiUser.login(data);
+      if (!user) return;
       onlineUsers.push({ socketId: socket.id, user });
       socket.emit('login', user);
       io.sockets.emit('get online users', onlineUsers);

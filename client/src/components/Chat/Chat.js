@@ -50,9 +50,9 @@ class Chat extends Component {
         direction='row'
         justify='space-between'
         alignItems='stretch'
-        spacing={16}
+        spacing={8}
       >
-        <VoiceChat socket={socket} />
+        <VoiceChat socket={socket} user={user} />
         <Messages avatarColor={avatarColor} socket={socket} />
         <UsersOnOff
           onUserOnClick={this.props.onUserOnClick}

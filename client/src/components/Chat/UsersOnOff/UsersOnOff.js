@@ -27,6 +27,7 @@ const UsersOnOff = ({ onlineUsers, usersOfTheRoom, socket, onUserOnClick }) => {
         backgroundColor: '#2F3136',
         padding: '20px'
       }}
+      xs={3}
       sm={2}
       item
     >

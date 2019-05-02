@@ -10,7 +10,8 @@ const UserInformation = ({
   body1,
   caption,
   date,
-  onUserOnClick
+  onUserOnClick,
+  avatarConfig = {}
 }) => {
   if (date) {
     date = formatDate(date);
@@ -21,12 +22,14 @@ const UserInformation = ({
       <Avatar
         onClick={onUserOnClick}
         id='avatar-user-on'
-        sizes='50px'
         style={{
           float: 'left',
           marginRight: '10px',
           marginBottom: '10px',
-          backgroundColor: avatarColor
+          backgroundColor: avatarColor,
+          width: avatarConfig.w || '40px',
+          height: avatarConfig.h || '40px',
+          fontSize: avatarConfig.fs || '16pt'
         }}
       >
         {avatarLetters}

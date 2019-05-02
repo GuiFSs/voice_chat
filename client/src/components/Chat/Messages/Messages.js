@@ -46,18 +46,19 @@ class Messages extends Component {
     return (
       <Grid id='messages-grid' xs={6} sm={8} item>
         {allMessages.map((message, i) => (
-          <Message
-            avatarColor={message.user.avatarColor}
-            previousUsrId={
-              allMessages[i - 1] ? allMessages[i - 1].user.username : null
-            }
-            currentUsrId={allMessages[i].user.username}
-            date={message.date}
-            username={message.user.username}
-            key={message._id}
-          >
-            {message.body}
-          </Message>
+          <div style={{ marginLeft: '-35px' }} key={message._id}>
+            <Message
+              avatarColor={message.user.avatarColor}
+              previousUsrId={
+                allMessages[i - 1] ? allMessages[i - 1].user.username : null
+              }
+              currentUsrId={allMessages[i].user.username}
+              date={message.date}
+              username={message.user.username}
+            >
+              {message.body}
+            </Message>
+          </div>
         ))}
         <div
           style={{ float: 'left', clear: 'both' }}

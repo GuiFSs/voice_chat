@@ -8,7 +8,7 @@ const PeerConnection = ({ socket, myPeer }) => {
 
   const creteNewAudioEl = (peer, remoteStream) => {
     const audioElAlreadyExists = audiosEl
-      .map(audio => audio.props.split('_')[2] === peer)
+      .map(audio => audio && audio.props && audio.props.split('_')[2] === peer)
       .includes(true);
     if (audioElAlreadyExists) return;
     const newAudiosEl = [...audiosEl];
