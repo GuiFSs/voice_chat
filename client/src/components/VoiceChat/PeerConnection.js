@@ -42,7 +42,12 @@ const PeerConnection = ({ socket, myPeer }) => {
     const stream = await navigator.mediaDevices.getUserMedia({
       audio: true
     });
-    const call = myPeer.call(id, stream);
+    const call = myPeer.call(id, stream, {
+      constraints: {
+        mandatoty: { OfferToReceiveAudio: true, OfferToReceiveVideo: true }
+      }
+    });
+
     console.log('nova call with:', call.peer);
     call.on('stream', function(remoteStream) {
       creteNewAudioEl(call.peer, remoteStream);

@@ -30,10 +30,10 @@ class VoiceChat extends Component {
       host: 'audio-chat-aps.herokuapp.com',
       secure: true
     });
+
     myPeer.on('open', id => {
       socket.emit('add new peer', id);
       console.log('my peer id:', id);
-
       this.setState({
         userConnectedToVoiceChat: true,
         showConnectButton: 'hidden',
