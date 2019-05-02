@@ -148,7 +148,14 @@ class Login extends Component {
         container
         style={{ height: window.innerHeight }}
       >
-        <Grid xs={8} md={6} style={{ alignSelf: 'center' }} id='login-div' item>
+        <Grid
+          xs={8}
+          md={6}
+          lg={4}
+          style={{ alignSelf: 'center' }}
+          id='login-div'
+          item
+        >
           <TextField
             fullWidth
             variant='outlined'
