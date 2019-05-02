@@ -25,10 +25,19 @@ class VoiceChat extends Component {
   connectToVoiceChat = () => {
     const { socket } = this.state;
     const myPeer = new Peer({
-      // key
-      path: '/peerjs', // <==========
       host: 'audio-chat-aps.herokuapp.com',
-      secure: true
+      path: '/peerjs',
+      secure: true,
+      config: {
+        iceServers: [
+          { url: 'stun:stun1.l.google.com:19302' },
+          {
+            url: 'turn:numb.viagenie.ca',
+            credential: 'muazkh',
+            username: 'webrtc@live.com'
+          }
+        ]
+      }
     });
 
     myPeer.on('open', id => {
