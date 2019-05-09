@@ -88,6 +88,9 @@ io.sockets.on('connection', async socket => {
 
       io.sockets.emit('get all messages', allMessages);
       console.log('online users', onlineUsers.length);
+
+      const peerUsers = getPeerUsers();
+      socket.emit('get all peers users', peerUsers);
     } catch (err) {
       socket.emit('error', { msg: 'user not found' });
       console.log('error with login:', err);
@@ -121,9 +124,13 @@ io.sockets.on('connection', async socket => {
 
   // peer related
   socket.on('add new peer', peerId => {
-    peers.push({ id: socket.id, peerId });
+    peers.push({ socketId: socket.id, peerId });
     console.log(`number of users in voice chaht: ${peers.length}`);
     socket.broadcast.emit('get other peer id', peerId);
+
+    const peersUsers = getPeerUsers();
+
+    io.sockets.emit('get all peers users', peersUsers);
   });
 
   socket.on('disconnect', () => {
@@ -134,9 +141,11 @@ io.sockets.on('connection', async socket => {
     if (disconnectedUser) {
       removeUserByIndex(onlineUsersIndex);
       socket.broadcast.emit('get online users', onlineUsers);
-      // socket.broadcast.emit('user disconnected', disconnectedUser);
     }
     removePeerByIndex(peerIndex);
+
+    const peerUsers = getPeerUsers();
+    socket.broadcast.emit('get all peers users', peerUsers);
     console.log(
       `user disconnected, number of users: ${onlineUsers.length}, peers: ${
         peers.length
@@ -144,6 +153,14 @@ io.sockets.on('connection', async socket => {
     );
   });
 });
+
+const getPeerUsers = () =>
+  peers.map(
+    peer =>
+      onlineUsers.filter(usr =>
+        peer.socketId === usr.socketId ? usr.user : false
+      )[0]
+  );
 
 const userLoggedIn = user =>
   onlineUsers.map(usr => user.username === usr.user.username).includes(true);
@@ -155,7 +172,7 @@ const removePeerByIndex = peerIndex => peers.splice(peerIndex, 1);
 const findPeerIndex = id => {
   let peerIndex = null;
   peers.filter((user, index) => {
-    if (user.id === id) {
+    if (user.socketId === id) {
       peerIndex = index;
       return true;
     }

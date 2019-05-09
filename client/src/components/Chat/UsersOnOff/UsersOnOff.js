@@ -35,9 +35,22 @@ class UsersOnOff extends Component {
     const { onlineUsers, usersOfTheRoom, onUserOnClick } = this.props;
     const { typingUsers } = this.state;
 
+    console.log(onlineUsers, usersOfTheRoom);
+
+    const flaggedIndex = [];
+    let usrRoomIndex = 0;
+    for (const usrRoom of usersOfTheRoom) {
+      for (const usrOnline of onlineUsers) {
+        if (usrRoom.username === usrOnline.user.username) {
+          flaggedIndex.push(usrRoomIndex);
+        }
+      }
+      usrRoomIndex++;
+    }
+
     // TODO: make offline users
     let offlineUsers = usersOfTheRoom.filter(
-      user => user.username !== 'guifss'
+      (_, index) => !flaggedIndex.includes(index)
     );
     return (
       <Grid
@@ -62,7 +75,7 @@ class UsersOnOff extends Component {
             variant='subtitle1'
             gutterBottom
           >
-            ONLINE-{onlineUsers && onlineUsers.length}
+            ONLINE -- {onlineUsers && onlineUsers.length}
           </Typography>
           {onlineUsers.length > 0 &&
             onlineUsers.map(({ user }) => (
@@ -84,7 +97,7 @@ class UsersOnOff extends Component {
             variant='subtitle1'
             gutterBottom
           >
-            OFFLINE-{offlineUsers.length}
+            OFFLINE -- {offlineUsers.length}
           </Typography>
           {offlineUsers.length > 0 &&
             offlineUsers.map(user => (

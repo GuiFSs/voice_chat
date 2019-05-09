@@ -17,13 +17,24 @@ class VoiceChat extends Component {
     };
   }
 
+  componentDidMount() {
+    const { socket } = this.state;
+    socket.on('get all peers users', data => {
+      this.setState({ users: data });
+    });
+  }
+
   static getDerivedStateFromProps = props => ({
     socket: props.socket,
     user: props.user
   });
 
-  connectToVoiceChat = () => {
-    const { socket } = this.state;
+  connectToVoiceChat = async () => {
+    const { socket, showConnectButton, userConnectedToVoiceChat } = this.state;
+    if (showConnectButton === 'hidden' || userConnectedToVoiceChat) return;
+    await this.setState({
+      showConnectButton: 'hidden'
+    });
     const myPeer = new Peer({
       host: 'audio-chat-aps.herokuapp.com',
       path: '/peerjs',
@@ -33,7 +44,7 @@ class VoiceChat extends Component {
           { url: 'stun:stun1.l.google.com:19302' },
           {
             url: 'turn:numb.viagenie.ca',
-            credential: 'muazkh',
+            credential: 'guifss',
             username: 'webrtc@live.com'
           }
         ]
@@ -45,9 +56,7 @@ class VoiceChat extends Component {
       console.log('my peer id:', id);
       this.setState({
         userConnectedToVoiceChat: true,
-        showConnectButton: 'hidden',
-        myPeer,
-        users: [this.state.user]
+        myPeer
       });
     });
     return myPeer;
@@ -76,17 +85,8 @@ class VoiceChat extends Component {
           <PeerConnection myPeer={myPeer} socket={socket} />
         )}
 
-        <Button
-          variant='contained'
-          style={{ visibility: showConnectButton }}
-          onClick={this.connectToVoiceChat}
-          color='primary'
-        >
-          Connect to voice chat
-        </Button>
-
         <div style={{ marginTop: '60px' }}>
-          <Typography>
+          <Typography id='voice-channel' onClick={this.connectToVoiceChat}>
             <svg
               style={{
                 width: '20px',
@@ -104,18 +104,18 @@ class VoiceChat extends Component {
             </svg>
             Knéél de voix
           </Typography>
+          {/* users in the voice channel */}
           <div style={{ marginLeft: '20px' }}>
-            {users.map(usr => (
-              <div key={usr.username} style={{ marginTop: '15px' }}>
+            {users.map(({ user }) => (
+              <div key={user.username} style={{ marginTop: '15px' }}>
                 <UserInformation
                   avatarConfig={{ w: '25px', h: '25px', fs: '11pt' }}
-                  avatarColor={usr.avatarColor}
-                  avatarLetters={`${usr.username
+                  avatarColor={user.avatarColor}
+                  avatarLetters={`${user.username
                     .split('')
                     .filter((_, i) => i < 3)
                     .join('')}`}
-                  body1={usr.username}
-                  // onUserOnClick
+                  body1={user.username}
                 />
               </div>
             ))}
