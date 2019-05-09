@@ -7,7 +7,7 @@ import withRoot from './Layout/withRoot';
 import * as muiColors from '@material-ui/core/colors/';
 
 let socketUrl = 'http://localhost:5000';
-socketUrl = '';
+// socketUrl = '';
 
 class App extends Component {
   constructor(props) {
@@ -27,6 +27,12 @@ class App extends Component {
         isAuthenticate: true
       });
     });
+    socket.on('message', data => {
+      if (data.loginError) {
+        alert(data.loginError);
+      }
+      console.log('message:', data);
+    });
   }
 
   getRandomMUIColor = () => {
@@ -40,13 +46,6 @@ class App extends Component {
     if (loginOrCadastrar === 'login') {
       try {
         socket.emit('login', user);
-        // const res = await axios.post(`${socketUrl}/api/user/login`, user);
-        // console.log(res.data.msg);
-        // this.setState({
-        //   user: { ...res.data.user },
-        //   isAuthenticate: true
-        // });
-        // socket.emit('login', res.data.user);
       } catch (err) {
         console.log(err);
       }

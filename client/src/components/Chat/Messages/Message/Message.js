@@ -33,7 +33,11 @@ const Message = ({
       )}
       <Typography
         variant='body2'
-        style={{ marginBottom: '-20px', marginLeft: '50px' }}
+        style={{
+          marginBottom: '-20px',
+          marginLeft: '50px',
+          wordBreak: 'break-word'
+        }}
       >
         {children}{' '}
       </Typography>

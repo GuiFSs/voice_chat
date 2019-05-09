@@ -71,7 +71,7 @@ io.sockets.on('connection', async socket => {
 
   socket.on('login', async data => {
     if (userLoggedIn(data)) {
-      socket.emit('error', { msg: 'user already logged in' });
+      socket.send({ loginError: 'user already logged in' });
       return;
     }
 
@@ -112,7 +112,7 @@ io.sockets.on('connection', async socket => {
   });
 
   socket.on('typing', data => {
-    socket.broadcast.emit('typing', data);
+    io.sockets.emit('typing', data);
   });
 
   socket.on('stop typing', data => {

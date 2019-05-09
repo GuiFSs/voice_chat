@@ -4,28 +4,19 @@ import { TextField, Grid } from '@material-ui/core';
 // TODO: create events when user is typing, create the message when someone press ENTER
 const TextArea = ({ sendMessage, socket, username }) => {
   const [txtValue, setTxtValue] = useState('');
-  const [typingUsers, setTypingUsers] = useState([]);
-  const [typingTimer, setTypingTimer] = useState([]);
-  const [typingUser, setTypingUser] = useState(false);
-
   const handleEnterPressed = () => {
     const trimValue = txtValue.trim();
     if (trimValue.legth === 0 || trimValue === '') return;
-    setTypingUser(false);
-    sendMessage(txtValue);
     setTimeout(() => {
       setTxtValue('');
       socket.emit('stop typing', username);
     }, 1);
+    sendMessage(txtValue);
   };
 
   const handleChange = value => {
-    // TODO: make a good typing system :(
+    socket.emit('typing', username);
     setTxtValue(value);
-    if (!typingUser) {
-      socket.emit('typing', username);
-      setTypingUser(true);
-    }
   };
   return (
     <Grid
