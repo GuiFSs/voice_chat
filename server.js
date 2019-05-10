@@ -154,13 +154,17 @@ io.sockets.on('connection', async socket => {
   });
 });
 
-const getPeerUsers = () =>
-  peers.map(
-    peer =>
-      onlineUsers.filter(usr =>
-        peer.socketId === usr.socketId ? usr.user : false
-      )[0]
-  );
+const getPeerUsers = () => {
+  const peerUsers = [];
+  for (const peer of peers) {
+    for (const usr of onlineUsers) {
+      if (peer.socketId === usr.socketId) {
+        peerUsers.push(usr);
+      }
+    }
+  }
+  return peerUsers;
+};
 
 const userLoggedIn = user =>
   onlineUsers.map(usr => user.username === usr.user.username).includes(true);
