@@ -42,23 +42,17 @@ class VoiceChat extends Component {
       debug: 4,
       config: {
         iceServers: [
-          { url: 'stun.l.google.com' },
-          {url: 'stun.sipgate.net'},
+          { url: 'stun:stun1.l.google.com:19302' },
           {
-            url: 'turn:192.158.29.39:3478?transport=udp',
-            credential: 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
-            username: '28224511:1379330808'
+            url: 'turn:numb.viagenie.ca',
+            credential: 'guifss',
+            username: 'guifss@live.com'
           },
           {
             url: 'turn:turn.bistri.com:80',
             credential: 'homeo',
             username: 'homeo'
           }
-          // {
-          //   url: 'turn:numb.viagenie.ca',
-          //   credential: 'guifss',
-          //   username: 'webrtc@live.com'
-          // }
         ]
       }
     });
