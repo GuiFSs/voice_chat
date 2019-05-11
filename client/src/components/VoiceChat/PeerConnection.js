@@ -35,6 +35,9 @@ const PeerConnection = ({ socket, myPeer }) => {
       call.on('stream', remoteStream => {
         creteNewAudioEl(call.peer, remoteStream);
       });
+      call.on('error', error => {
+        console.log('deu erro aki meu:', error.type);
+      });
     });
   };
 
@@ -74,7 +77,6 @@ const PeerConnection = ({ socket, myPeer }) => {
 
   return (
     <div id='audio_peers'>
-      {console.log('audios: ', audiosEl)}
       <h1>
         {audiosEl.map(aud => (
           <audio
