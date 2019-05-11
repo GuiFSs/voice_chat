@@ -39,7 +39,7 @@ class VoiceChat extends Component {
       host: 'audio-chat-aps.herokuapp.com',
       path: '/peerjs',
       secure: true,
-      debug: 3
+      debug: 3,
       config: {
         iceServers: [
           { url: 'stun3.l.google.com:19302' },
@@ -47,7 +47,12 @@ class VoiceChat extends Component {
             url: 'turn:192.158.29.39:3478?transport=udp',
             credential: 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
             username: '28224511:1379330808'
-          }
+          },
+          {
+            url: 'turn:turn.bistri.com:80',
+            credential: 'homeo',
+            username: 'homeo'
+         }
           // {
           //   url: 'turn:numb.viagenie.ca',
           //   credential: 'guifss',
