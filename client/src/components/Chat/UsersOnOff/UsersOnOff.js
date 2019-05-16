@@ -35,8 +35,6 @@ class UsersOnOff extends Component {
     const { onlineUsers, usersOfTheRoom, onUserOnClick } = this.props;
     const { typingUsers } = this.state;
 
-    console.log(onlineUsers, usersOfTheRoom);
-
     const flaggedIndex = [];
     let usrRoomIndex = 0;
     for (const usrRoom of usersOfTheRoom) {

@@ -1,47 +1,74 @@
-import React, { useState } from 'react';
+import React, { Component } from 'react';
 
-const PeerConnection = ({ socket, myPeer }) => {
-  if (!myPeer) return;
-  const [audiosEl, setAudiosEl] = useState([]);
-
-  let othersPeersId = [];
-
-  const creteNewAudioEl = (peer, remoteStream) => {
-    const audioElAlreadyExists = audiosEl
-      .map(audio => audio && audio.props && audio.props.split('_')[2] === peer)
-      .includes(true);
-    if (audioElAlreadyExists) return;
-    const newAudiosEl = [...audiosEl];
-    const id = `other_audio_${peer}`;
-    newAudiosEl.push({
-      id,
-      remoteStream
-    });
-    setAudiosEl(newAudiosEl);
+class PeerConnection extends Component {
+  state = {
+    audiosEl: [],
+    calls: []
   };
 
-  const myPeerFunctions = () => {
-    myPeer.on('connection', conn => {
-      conn.on('data', data => {
-        console.log('yeah, print from othres:', data);
-      });
+  componentDidMount() {
+    const { socket, myPeer } = this.props;
+    const { calls } = this.state;
+
+    socket.on('get other peer id', data => {
+      console.log('chamou get other peer id');
+
+      if (myPeer.disconnected) return;
+      if (!othersPeersId.includes(data) && data !== myPeer.id) {
+        othersPeersId.push(data);
+        if (!this.verifyIfCallAlreadyExists(data)) {
+          this.callToPeer(data);
+        }
+      }
     });
 
+    socket.on('disconnect peer', data => {
+      let index = 0;
+      for (const call of calls) {
+        if (call.peer === data) {
+          call.close();
+          break;
+        }
+        index++;
+      }
+      const newCalls = [...calls];
+      newCalls.splice(index, 1);
+      this.setState({ calls: newCalls });
+    });
+    let othersPeersId = [];
+    this.myPeerFunctions();
+  }
+
+  myPeerFunctions = () => {
+    const { myPeer } = this.props;
+    const { calls } = this.state;
+
     myPeer.on('call', async call => {
+      if (this.verifyIfCallAlreadyExists(call.peer)) return;
+
+      this.setState({ calls: [...this.state.calls, call] });
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: true
       });
       call.answer(stream);
       call.on('stream', remoteStream => {
-        creteNewAudioEl(call.peer, remoteStream);
+        this.createNewAudioEl(call.peer, remoteStream);
       });
       call.on('error', error => {
         console.log('deu erro aki meu:', error.type);
       });
     });
+
+    myPeer.on('close', () => {
+      console.log('audios zerados');
+      calls.map(call => call.close());
+      this.setState({ audiosEl: [], calls: [] });
+    });
   };
 
-  const callToPeer = async id => {
+  callToPeer = async id => {
+    const { myPeer } = this.props;
+
     const stream = await navigator.mediaDevices.getUserMedia({
       audio: true
     });
@@ -50,49 +77,64 @@ const PeerConnection = ({ socket, myPeer }) => {
         mandatoty: { OfferToReceiveAudio: true, OfferToReceiveVideo: true }
       }
     });
+    this.setState({ calls: [...this.state.calls, call] });
 
     console.log('nova call with:', call.peer);
-    call.on('stream', function(remoteStream) {
-      creteNewAudioEl(call.peer, remoteStream);
+    call.on('stream', remoteStream => {
+      this.createNewAudioEl(call.peer, remoteStream);
     });
   };
 
-  const connectPeerWith = id => {
-    const conn = myPeer.connect(id);
-    // on open will be launch when you successfully connect to PeerServer
-    conn.on('open', () => {
-      conn.send('hello new user!');
-    });
-  };
-
-  myPeerFunctions();
-
-  socket.on('get other peer id', data => {
-    if (!othersPeersId.includes(data) && data !== myPeer.id) {
-      othersPeersId.push(data);
-      callToPeer(data);
-      connectPeerWith(data);
+  verifyIfCallAlreadyExists = id => {
+    let exists = false;
+    for (const call of this.state.calls) {
+      if (call.peer === id) {
+        exists = true;
+        break;
+      }
     }
-  });
+    return exists;
+  };
 
-  return (
-    <div id='audio_peers'>
-      <h1>
-        {audiosEl.map(aud => (
-          <audio
-            key={aud.id}
-            id={aud.id}
-            autoPlay={true}
-            ref={audio => {
-              if (audio) {
-                audio.srcObject = aud.remoteStream;
-              }
-            }}
-          />
-        ))}
-      </h1>
-    </div>
-  );
-};
+  createNewAudioEl = (peer, remoteStream) => {
+    const { audiosEl } = this.state;
+    let audioElAlreadyExists = false;
+    for (const audio of audiosEl) {
+      if (audio.id.split('_')[2] === peer) {
+        audioElAlreadyExists = true;
+      }
+    }
+    if (audioElAlreadyExists) return;
+    const newAudiosEl = [...audiosEl];
+    const id = `other_audio_${peer}`;
+    newAudiosEl.push({
+      id,
+      remoteStream
+    });
+    this.setState({ audiosEl: newAudiosEl });
+  };
+
+  render() {
+    const { audiosEl } = this.state;
+    return (
+      <div id='audio_peers'>
+        <h1>
+          {audiosEl.map(aud => (
+            <audio
+              key={aud.id}
+              id={aud.id}
+              autoPlay={true}
+              ref={audio => {
+                if (audio) {
+                  audio.srcObject = aud.remoteStream;
+                }
+              }}
+            />
+          ))}
+        </h1>
+      </div>
+    );
+  }
+}
 
 export default PeerConnection;

@@ -5,3 +5,7 @@ body,
 body {
   overflow: hidden;
 }
+.disconnect-icon:hover {
+  background-color: #8d8d8d;
+  border-radius: 10px;
+}

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Grid, Button, Typography } from '@material-ui/core';
+import { Grid, Button, Typography, IconButton, Icon } from '@material-ui/core';
 import PeerConnection from './PeerConnection';
 import Peer from 'peerjs';
 import UserInformation from '../UserInformation/UserInformation';
@@ -29,54 +29,82 @@ class VoiceChat extends Component {
     user: props.user
   });
 
+  disconnectUser = () => {
+    const { myPeer, socket } = this.state;
+    myPeer.on('close', () => {
+      console.log('disconnected peer', myPeer.id);
+      socket.emit('disconnect peer', myPeer.id);
+      this.endConnection();
+    });
+    myPeer.destroy();
+  };
+  endConnection = () => {
+    const { socket, myPeer } = this.state;
+    socket.removeAllListeners(['get other peer id']);
+    myPeer.off('disconnected');
+    myPeer.off('open');
+    myPeer.off('connection');
+    myPeer.off('call');
+
+    this.setState({
+      userConnectedToVoiceChat: false,
+      showConnectButton: 'visible'
+    });
+  };
+
   connectToVoiceChat = async () => {
-    const { socket, showConnectButton, userConnectedToVoiceChat } = this.state;
+    const {
+      socket,
+      showConnectButton,
+      userConnectedToVoiceChat,
+      myPeer
+    } = this.state;
     if (showConnectButton === 'hidden' || userConnectedToVoiceChat) return;
     await this.setState({
       showConnectButton: 'hidden'
     });
-    const myPeer = new Peer({
-      host: 'audio-chat-aps.herokuapp.com',
-      path: '/peerjs',
-      secure: true,
-      debug: 4,
-      config: {
-        iceServers: [
-          { url: 'stun:stun1.l.google.com:19302' },
-          {
-            url: 'turn:numb.viagenie.ca',
-            credential: 'guifss',
-            username: 'guifss@live.com'
-          },
-          {
-            url: 'turn:turn.bistri.com:80',
-            credential: 'homeo',
-            username: 'homeo'
-          }
-        ]
-      }
-    });
-
-    myPeer.on('open', id => {
-      socket.emit('add new peer', id);
-      console.log('my peer id:', id);
+    try {
+      myPeer.reconnect();
+      socket.emit('add new peer', myPeer.id);
       this.setState({
         userConnectedToVoiceChat: true,
         myPeer
       });
-    });
-    return myPeer;
+    } catch (error) {
+      const newPeer = new Peer({
+        host: 'audio-chat-aps.herokuapp.com',
+        path: '/peerjs',
+        secure: true,
+        config: {
+          iceServers: [
+            { url: 'stun:stun1.l.google.com:19302' },
+            {
+              url: 'turn:numb.viagenie.ca',
+              credential: 'guifss',
+              username: 'guifss@live.com'
+            },
+            {
+              url: 'turn:turn.bistri.com:80',
+              credential: 'homeo',
+              username: 'homeo'
+            }
+          ]
+        }
+      });
+
+      newPeer.on('open', id => {
+        socket.emit('add new peer', id);
+        console.log('my peer id:', id);
+        this.setState({
+          userConnectedToVoiceChat: true,
+          myPeer: newPeer
+        });
+      });
+    }
   };
 
   render() {
-    const {
-      socket,
-      userConnectedToVoiceChat,
-      showConnectButton,
-      myPeer,
-      user,
-      users
-    } = this.state;
+    const { socket, userConnectedToVoiceChat, myPeer, users } = this.state;
     return (
       <Grid
         style={{
@@ -88,7 +116,10 @@ class VoiceChat extends Component {
         item
       >
         {userConnectedToVoiceChat && (
-          <PeerConnection myPeer={myPeer} socket={socket} />
+          <div>
+            {console.log('vai mostrar peer connection')}
+            <PeerConnection myPeer={myPeer} socket={socket} />
+          </div>
         )}
 
         <div style={{ marginTop: '60px' }}>
@@ -127,6 +158,17 @@ class VoiceChat extends Component {
             ))}
           </div>
         </div>
+        {userConnectedToVoiceChat && (
+          <div style={{ position: 'absolute', bottom: '15%' }}>
+            <Button
+              onClick={this.disconnectUser}
+              style={{ backgroundColor: 'red' }}
+              size='small'
+            >
+              Disconnect
+            </Button>
+          </div>
+        )}
       </Grid>
     );
   }

@@ -29,6 +29,7 @@ const TextArea = ({ sendMessage, socket, username }) => {
       <Grid xs={3} sm={2} item />
       <Grid xs={6} sm={8} item>
         <TextField
+          autoFocus
           style={{
             // position: 'fixed',
             // width: '67% ',

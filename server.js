@@ -124,7 +124,10 @@ io.sockets.on('connection', async socket => {
 
   // peer related
   socket.on('add new peer', peerId => {
-    peers.push({ socketId: socket.id, peerId });
+    const exists = peers.map(peer => peer.peerId === peerId).includes(true);
+    if (!exists) {
+      peers.push({ socketId: socket.id, peerId });
+    }
     console.log(`number of users in voice chaht: ${peers.length}`);
     socket.broadcast.emit('get other peer id', peerId);
 
@@ -133,8 +136,22 @@ io.sockets.on('connection', async socket => {
     io.sockets.emit('get all peers users', peersUsers);
   });
 
+  socket.on('get all peers user', () => {
+    const peersUsers = getPeerUsers();
+    io.sockets.emit('get all peers users', peersUsers);
+  });
+
+  socket.on('disconnect peer', data => {
+    const index = findPeerIndex(data);
+    removePeerByIndex(index);
+    const peersUsers = getPeerUsers();
+    console.log('peer disconnected, peer length:', peersUsers.length);
+    io.sockets.emit('get all peers users', peersUsers);
+    socket.broadcast.emit('disconnect peer', data);
+  });
+
   socket.on('disconnect', () => {
-    const peerIndex = findPeerIndex(socket.id);
+    const peerIndex = findPeerIndexBySocketId(socket.id);
     const onlineUsersIndex = findUserIndex(socket.id);
 
     let disconnectedUser = onlineUsers[onlineUsersIndex];
@@ -163,7 +180,19 @@ const getPeerUsers = () => {
       }
     }
   }
-  return peerUsers;
+  return findDupPeerUserAndRemove(peerUsers);
+};
+
+const findDupPeerUserAndRemove = peerUsers => {
+  const newPeerUsers = [];
+  const socketIds = Array.from(new Set(peerUsers.map(usr => usr.socketId)));
+  for (const id of socketIds) {
+    const user = peerUsers.find(value => value.socketId === id);
+    if (user) {
+      newPeerUsers.push(user);
+    }
+  }
+  return newPeerUsers;
 };
 
 const userLoggedIn = user =>
@@ -173,10 +202,23 @@ const removeUserByIndex = onlineUsersIndex =>
   onlineUsers.splice(onlineUsersIndex, 1);
 const removePeerByIndex = peerIndex => peers.splice(peerIndex, 1);
 
-const findPeerIndex = id => {
+const findPeerIndexBySocketId = socketId => {
   let peerIndex = null;
-  peers.filter((user, index) => {
-    if (user.socketId === id) {
+  peers.filter((peer, index) => {
+    if (peer.socketId === socketId) {
+      peerIndex = index;
+      return true;
+    }
+    return false;
+  });
+
+  return peerIndex;
+};
+
+const findPeerIndex = peerId => {
+  let peerIndex = null;
+  peers.filter((peer, index) => {
+    if (peer.peerId === peerId) {
       peerIndex = index;
       return true;
     }
