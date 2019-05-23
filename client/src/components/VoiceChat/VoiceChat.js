@@ -75,21 +75,21 @@ class VoiceChat extends Component {
         host: 'audio-chat-aps.herokuapp.com',
         path: '/peerjs',
         secure: true,
-        config: {
-          iceServers: [
-            { url: 'stun:stun1.l.google.com:19302' },
-            {
-              url: 'turn:numb.viagenie.ca',
-              credential: 'guifss',
-              username: 'guifss@live.com'
-            },
-            {
-              url: 'turn:turn.bistri.com:80',
-              credential: 'homeo',
-              username: 'homeo'
-            }
-          ]
-        }
+        // config: {
+        //   iceServers: [
+        //     { url: 'stun:stun1.l.google.com:19302' },
+        //     {
+        //       url: 'turn:numb.viagenie.ca',
+        //       credential: 'guifss',
+        //       username: 'guifss@live.com'
+        //     },
+        //     {
+        //       url: 'turn:turn.bistri.com:80',
+        //       credential: 'homeo',
+        //       username: 'homeo'
+        //     }
+        //   ]
+        // }
       });
 
       newPeer.on('open', id => {
