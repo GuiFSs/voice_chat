@@ -18,7 +18,7 @@
     "body-parser": "1.18.3",
     "concurrently": "4.1.0",
     "express": "4.16.4",
-    "mongoose": "5.5.2",
+    "mongoose": "5.7.5",
     "peer": "0.2.10",
     "socket.io": "2.2.0",
     "socket.io-p2p-server": "1.2.0",
